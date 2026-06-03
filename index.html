@@ -2154,7 +2154,10 @@ function launchBalloons() {
       ctx.restore();
     });
     if (!allGone) requestAnimationFrame(draw);
-    else setTimeout(() => goTo('scene-wishes', buildWishes()), 400);
+    else setTimeout(() => {
+         buildWishes();
+         goTo('scene-wishes');
+    }, 400);
   }
   draw();
   setTimeout(() => goTo('scene-wishes'), 4500);
