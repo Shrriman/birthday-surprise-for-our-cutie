@@ -2507,7 +2507,11 @@ function initHeartGame() {
   // Controls
   let keys = {};
   function onKey(e) { keys[e.key] = e.type === 'keydown'; }
-  document.addEventListener('keydown', onKey); document.addEventListener('keyup', onKey);
+  document.removeEventListener('keydown', onKey);
+  document.removeEventListener('keyup', onKey);
+
+  document.addEventListener('keydown', onKey);
+  document.addEventListener('keyup', onKey);
   canvas.addEventListener('touchmove', e => {
     e.preventDefault();
     basket.x = e.touches[0].clientX - canvas.getBoundingClientRect().left;
