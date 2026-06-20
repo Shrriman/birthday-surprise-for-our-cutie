@@ -1489,95 +1489,114 @@ html, body {
      GAME MODALS
      ==================================================== -->
 
-<!-- Game 1: Love Cube Puzzle (Sliding puzzle) -->
+<!-- Game 1: Butterfly Garden -->
 <div class="game-modal" id="gameModal1">
   <div class="game-panel">
-    <h3>💕 Love Cube Puzzle</h3>
-    <p style="font-size:.8rem;color:var(--secondary);margin-bottom:12px">Slide tiles to arrange the picture!</p>
-    <div id="puzzleGrid" style="display:grid;gap:4px;width:fit-content;margin:0 auto;"></div>
-    <div style="margin-top:10px;font-size:.85rem;color:var(--secondary)" id="puzzleMoves">Moves: 0</div>
+    <h3>🦋 Butterfly Garden</h3>
+    <p style="font-size:.8rem;color:var(--secondary);margin-bottom:8px">
+      Catch 15 magical butterflies!
+    </p>
+
+    <canvas id="butterflyCanvas" class="game-canvas" width="300" height="250"></canvas>
+
+    <div style="margin-top:8px;font-size:.85rem;color:var(--secondary)">
+      Butterflies: <span id="butterflyScore">0</span> / 15
+    </div>
   </div>
+
   <button class="game-close-btn" id="closeGame1">← Back</button>
 </div>
 
-<!-- Game 2: Heart Collector -->
+<!-- Game 2: Memory Match -->
 <div class="game-modal" id="gameModal2">
   <div class="game-panel">
-    <h3>💖 Heart Collector</h3>
-    <p style="font-size:.8rem;color:var(--secondary);margin-bottom:8px">Catch 15 hearts! Avoid skulls!</p>
-    <canvas id="heartCanvas" class="game-canvas" width="300" height="250"></canvas>
+    <h3>🧠 Memory Match</h3>
+
+    <div class="memory-grid" id="memoryGrid"></div>
+
     <div style="margin-top:8px;font-size:.85rem;color:var(--secondary)">
-      Score: <span id="heartScore">0</span> / 15 &nbsp;|&nbsp; Lives: <span id="heartLives">3</span>
+      Pairs: <span id="memPairs">0</span> / 8
     </div>
   </div>
+
   <button class="game-close-btn" id="closeGame2">← Back</button>
 </div>
 
-<!-- Game 3: Rose Catcher -->
+<!-- Game 3: Hidden Gift Hunt -->
 <div class="game-modal" id="gameModal3">
   <div class="game-panel">
-    <h3>🌹 Rose Catcher</h3>
-    <p style="font-size:.8rem;color:var(--secondary);margin-bottom:8px">Catch 10 roses in the basket!</p>
-    <canvas id="roseCanvas" class="game-canvas" width="300" height="250"></canvas>
+    <h3>🎁 Hidden Gift Hunt</h3>
+
+    <div class="hunt-grid" id="huntGrid"></div>
+
     <div style="margin-top:8px;font-size:.85rem;color:var(--secondary)">
-      Roses: <span id="roseScore">0</span> / 10
+      Found: <span id="huntFound">0</span> / 5
     </div>
   </div>
+
   <button class="game-close-btn" id="closeGame3">← Back</button>
 </div>
 
-<!-- Game 4: Balloon Pop -->
+<!-- Game 4: Star Catcher -->
 <div class="game-modal" id="gameModal4">
   <div class="game-panel">
-    <h3>🎈 Balloon Pop</h3>
-    <p style="font-size:.8rem;color:var(--secondary);margin-bottom:8px">Pop 20 balloons in 30 seconds!</p>
-    <canvas id="balloonPopCanvas" class="game-canvas" width="300" height="250"></canvas>
+    <h3>🌟 Star Catcher</h3>
+
+    <canvas id="starCanvas" class="game-canvas" width="300" height="250"></canvas>
+
     <div style="margin-top:8px;font-size:.85rem;color:var(--secondary)">
-      Popped: <span id="popScore">0</span> / 20 &nbsp;|&nbsp; Time: <span id="popTime">30</span>s
+      Stars: <span id="starScore">0</span> / 20
     </div>
   </div>
+
   <button class="game-close-btn" id="closeGame4">← Back</button>
 </div>
 
-<!-- Game 5: Memory Match -->
+<!-- Game 5: Cupid Arrow -->
 <div class="game-modal" id="gameModal5">
   <div class="game-panel">
-    <h3>🧠 Memory Match</h3>
-    <p style="font-size:.8rem;color:var(--secondary);margin-bottom:8px">Find all matching pairs!</p>
-    <div class="memory-grid" id="memoryGrid" style="grid-template-columns:repeat(4,1fr)"></div>
+    <h3>🎯 Cupid Arrow</h3>
+
+    <canvas id="cupidCanvas" class="game-canvas" width="300" height="250"></canvas>
+
     <div style="margin-top:8px;font-size:.85rem;color:var(--secondary)">
-      Pairs: <span id="memPairs">0</span> / 8 &nbsp;|&nbsp; Flips: <span id="memFlips">0</span>
+      Hits: <span id="cupidScore">0</span> / 10
     </div>
   </div>
+
   <button class="game-close-btn" id="closeGame5">← Back</button>
 </div>
 
-<!-- Game 6: Cake Decoration -->
+<!-- Game 6: Lucky Birthday Wheel -->
 <div class="game-modal" id="gameModal6">
   <div class="game-panel">
-    <h3>🎨 Cake Decoration</h3>
-    <p style="font-size:.8rem;color:var(--secondary);margin-bottom:8px">Drag decorations onto the cake!</p>
-    <div class="cake-deco-area" id="decoArea">
-      <!-- Cake base rendered via JS -->
-    </div>
-    <div class="deco-palette" id="decoPalette"></div>
-    <div style="margin-top:8px;font-size:.85rem;color:var(--secondary)">
-      Items placed: <span id="decoCount">0</span> / 5
-    </div>
+    <h3>🎡 Lucky Birthday Wheel</h3>
+
+    <div id="birthdayWheel"></div>
+
+    <button id="spinWheelBtn" class="next-btn">
+      Spin Wheel ✨
+    </button>
+
+    <div id="wheelResult" style="margin-top:10px"></div>
   </div>
+
   <button class="game-close-btn" id="closeGame6">← Back</button>
 </div>
 
-<!-- Game 7: Hidden Gift Hunt -->
+<!-- Game 7: Crystal Memory Cave -->
 <div class="game-modal" id="gameModal7">
   <div class="game-panel">
-    <h3>🎁 Hidden Gift Hunt</h3>
-    <p style="font-size:.8rem;color:var(--secondary);margin-bottom:8px">Find 5 hidden gifts in the grid!</p>
-    <div class="hunt-grid" id="huntGrid"></div>
+    <h3>💎 Crystal Memory Cave</h3>
+
+    <div id="crystalGrid" class="memory-grid"></div>
+
     <div style="margin-top:8px;font-size:.85rem;color:var(--secondary)">
-      Found: <span id="huntFound">0</span> / 5 &nbsp;|&nbsp; Tries: <span id="huntTries">0</span>
+      Crystals Found:
+      <span id="crystalScore">0</span> / 8
     </div>
   </div>
+
   <button class="game-close-btn" id="closeGame7">← Back</button>
 </div>
 
