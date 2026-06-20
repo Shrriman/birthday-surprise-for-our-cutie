@@ -707,6 +707,201 @@ html, body {
 .photo-close { background: var(--primary); border: none; border-radius: 50px; color: white; padding: 8px 24px; cursor: pointer; font-family: var(--font-serif); margin-top: 8px; }
 
 /* ============================================================
+   SCENE 8.5 – PHOTO ALBUM
+   ============================================================ */
+#scene-album {
+  background: radial-gradient(ellipse at 50% 20%, rgba(60,0,48,.7), rgba(12,0,10,.97));
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  overflow: hidden;
+}
+.album-title {
+  font-family: var(--font-script);
+  font-size: clamp(1.8rem,4.5vw,2.8rem);
+  color: var(--primary);
+  text-shadow: 0 0 24px var(--glow);
+  text-align: center;
+}
+.album-sub {
+  font-size: .8rem;
+  letter-spacing: 1.5px;
+  color: rgba(255,214,234,.55);
+  text-align: center;
+  margin-top: -8px;
+}
+
+.album-stage {
+  position: relative;
+  width: min(380px, 88vw);
+  height: min(440px, 56vh);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1800px;
+}
+
+.album-book {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.album-page {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #2a0a22, #1a0515);
+  border: 1px solid rgba(255,214,234,.18);
+  border-radius: 14px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.02) inset;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+  transition: transform .85s cubic-bezier(.45,.05,.18,1), box-shadow .85s ease;
+}
+/* Pages stack visually behind the active one for book-depth illusion */
+.album-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  box-shadow: inset 0 0 40px rgba(0,0,0,.35);
+  pointer-events: none;
+}
+.album-page.state-current { transform: rotateY(0deg); z-index: 5; box-shadow: 0 20px 60px rgba(0,0,0,.65); }
+.album-page.state-next    { transform: rotateY(-180deg); z-index: 1; }
+.album-page.state-prev    { transform: rotateY(0deg); z-index: 1; }
+.album-page.state-stack   { transform: rotateY(0deg); z-index: 0; opacity: 0; pointer-events: none; }
+.album-page.flipping-out  { transform: rotateY(-180deg); z-index: 6; }
+.album-page.flipping-in   { transform: rotateY(0deg); z-index: 6; }
+
+.album-polaroid {
+  width: min(220px, 72%);
+  background: linear-gradient(160deg,#fff9fb,#ffeaf3);
+  border-radius: 6px;
+  padding: 10px 10px 16px;
+  box-shadow: 0 14px 30px rgba(0,0,0,.45);
+  transform: rotate(var(--prot, -1.5deg));
+}
+.album-photo-frame {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 3px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--secondary), #ffc0d8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.album-photo-frame img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.album-page-number {
+  font-family: var(--font-script);
+  font-size: 1.1rem;
+  color: var(--primary);
+  opacity: .85;
+}
+.album-caption {
+  font-family: var(--font-script);
+  font-size: clamp(1.1rem,2.6vw,1.4rem);
+  color: var(--secondary);
+  text-align: center;
+  line-height: 1.4;
+  text-shadow: 0 0 12px rgba(255,95,162,.25);
+  padding: 0 6px;
+}
+
+.album-nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,95,162,.4);
+  background: rgba(36,0,24,.7);
+  color: var(--primary);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s;
+  backdrop-filter: blur(4px);
+}
+.album-nav-arrow:hover { background: rgba(255,95,162,.25); box-shadow: 0 0 16px var(--glow); }
+.album-nav-arrow:disabled { opacity: .25; cursor: default; box-shadow: none; }
+.album-nav-prev { left: -8px; }
+.album-nav-next { right: -8px; }
+
+.album-dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 320px;
+}
+.album-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: rgba(255,214,234,.25);
+  border: 1px solid rgba(255,95,162,.3);
+  cursor: pointer;
+  transition: all .25s;
+  padding: 0;
+}
+.album-dot.active { background: var(--primary); box-shadow: 0 0 10px var(--glow); transform: scale(1.3); }
+
+.album-finale {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  margin-top: 4px;
+  animation: fade-up .6s ease;
+}
+.album-finale.visible { display: flex; }
+.album-finale-glow {
+  font-size: 2.4rem;
+  animation: heartbeat-big 1.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 14px var(--glow));
+}
+.album-finale-msg {
+  font-family: var(--font-script);
+  font-size: clamp(1.2rem,3vw,1.6rem);
+  color: var(--primary);
+  line-height: 1.5;
+  text-shadow: 0 0 20px var(--glow);
+  max-width: 360px;
+}
+.album-continue-btn {
+  margin-top: 6px;
+  background: linear-gradient(135deg, #ffb6d9, var(--primary), #d44080);
+  background-size: 200% 200%;
+  animation: album-btn-shimmer 3s ease-in-out infinite;
+}
+@keyframes album-btn-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+@media (max-width: 480px) {
+  .album-nav-prev { left: 2px; }
+  .album-nav-next { right: 2px; }
+}
+
+/* ============================================================
    SCENE 9 – GAME PORTAL
    ============================================================ */
 #scene-portal {
@@ -820,6 +1015,12 @@ html, body {
 .game-status { font-size: .7rem; margin-top: 4px; color: rgba(255,214,234,.5); }
 .game-card.completed .game-status { color: var(--primary); }
 
+.games-continue-wrap {
+  text-align: center;
+  margin-top: 8px;
+  padding-bottom: 10px;
+}
+
 /* Game modals */
 .game-modal {
   display: none;
@@ -889,41 +1090,6 @@ html, body {
 .mem-card.flipped { background: linear-gradient(135deg, var(--dark4),#7a1860); border-color: var(--primary); }
 .mem-card.matched { background: linear-gradient(135deg, #5c1145, #7a1860); border-color: var(--primary); box-shadow: 0 0 12px var(--glow); }
 
-/* Cake deco game */
-.cake-deco-area {
-  width: min(240px,70vw);
-  height: min(200px,35vh);
-  margin: 0 auto;
-  position: relative;
-  border: 2px dashed rgba(255,95,162,.3);
-  border-radius: 12px;
-  overflow: hidden;
-  background: linear-gradient(180deg, var(--dark3), var(--dark2));
-}
-.deco-palette {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 12px;
-}
-.deco-item {
-  font-size: 1.6rem;
-  cursor: grab;
-  padding: 6px;
-  border-radius: 8px;
-  background: rgba(255,95,162,.1);
-  border: 1px solid rgba(255,95,162,.2);
-  transition: transform .2s;
-}
-.deco-item:hover { transform: scale(1.2); }
-.placed-deco {
-  position: absolute;
-  font-size: 1.4rem;
-  cursor: move;
-  user-select: none;
-}
-
 /* Gift hunt grid */
 .hunt-grid {
   display: grid;
@@ -948,6 +1114,22 @@ html, body {
 .hunt-cell:hover { background: rgba(255,95,162,.2); }
 .hunt-cell.revealed { cursor: default; }
 .hunt-cell.revealed.empty::after { content: '✨'; font-size: .8rem; opacity: .5; }
+
+.hunt-message {
+  margin-top: 12px;
+  font-size: .95rem;
+  font-weight: 600;
+  min-height: 1.4em;
+  letter-spacing: .5px;
+}
+.hunt-message.win { color: #5fffb0; text-shadow: 0 0 12px rgba(95,255,176,.5); }
+.hunt-message.lose { color: #ff6b6b; text-shadow: 0 0 12px rgba(255,107,107,.4); }
+
+.try-again-btn {
+  display: none;
+  margin: 12px auto 0;
+}
+.try-again-btn.visible { display: inline-block; }
 
 /* ============================================================
    SCENE 11 – SECRET AREA UNLOCK (handled in JS overlay)
@@ -1217,13 +1399,229 @@ html, body {
   color: var(--primary);
   text-shadow: 0 0 30px var(--glow);
 }
-.unlock-sub {
-  font-size: clamp(.9rem,2vw,1.2rem);
+/* ============================================================
+   GAME-SPECIFIC: STAR / CUPID CANVASES
+   ============================================================ */
+#starCanvas { cursor: pointer; }
+#cupidCanvas { cursor: crosshair; }
+
+/* ============================================================
+   GAME 1: SUPRIYA PHOTO PUZZLE
+   ============================================================ */
+.photo-puzzle-panel { max-width: 420px; }
+
+.puzzle-stage {
+  position: relative;
+  width: min(300px, 78vw);
+  height: min(300px, 78vw);
+  margin: 6px auto 0;
+}
+
+.puzzle-board {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 4px;
+  padding: 8px;
+  background: rgba(255,255,255,.06);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,95,162,.3);
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(255,95,162,.2), inset 0 0 30px rgba(255,95,162,.05);
+}
+
+.puzzle-piece {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  box-shadow: 0 4px 14px rgba(0,0,0,.35);
+  border: 1px solid rgba(255,255,255,.15);
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+.puzzle-piece:active { transform: scale(.96); }
+.puzzle-piece.movable:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 16px var(--glow), 0 4px 14px rgba(0,0,0,.4);
+  filter: brightness(1.08);
+}
+.puzzle-piece.blank {
+  cursor: default;
+  background: rgba(0,0,0,.25);
+  border: 1px dashed rgba(255,95,162,.25);
+  box-shadow: none;
+}
+.puzzle-piece.blank:hover { transform: none; box-shadow: none; filter: none; }
+.puzzle-piece.just-moved { animation: piece-pop .25s ease; }
+@keyframes piece-pop {
+  0%   { transform: scale(.92); }
+  60%  { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+.puzzle-reveal {
+  display: none;
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  background: rgba(18,0,13,.25);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,95,162,.4);
+  box-shadow: 0 0 50px rgba(255,95,162,.35), inset 0 0 30px rgba(255,95,162,.08);
+  animation: reveal-in .6s cubic-bezier(.34,1.56,.64,1);
+}
+.puzzle-reveal.visible { display: flex; }
+.puzzle-reveal img {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.puzzle-reveal-msg {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 14px 10px;
+  text-align: center;
+  font-family: var(--font-script);
+  font-size: clamp(.95rem, 3vw, 1.2rem);
+  color: #fff;
+  background: linear-gradient(0deg, rgba(61,0,48,.85), rgba(61,0,48,0));
+  text-shadow: 0 0 12px rgba(255,95,162,.6);
+}
+@keyframes reveal-in {
+  from { opacity: 0; transform: scale(.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ============================================================
+   GAME 6: LUCKY BIRTHDAY WHEEL
+   ============================================================ */
+.wheel-wrap {
+  position: relative;
+  width: min(220px, 60vw);
+  height: min(220px, 60vw);
+  margin: 8px auto 0;
+}
+.wheel-pointer {
+  position: absolute;
+  top: -14px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.6rem;
+  color: var(--primary);
+  z-index: 3;
+  filter: drop-shadow(0 0 6px var(--glow));
+}
+.wheel-disc {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  position: relative;
+  border: 4px solid var(--primary);
+  box-shadow: 0 0 30px var(--glow), inset 0 0 20px rgba(0,0,0,.3);
+  transition: transform 4s cubic-bezier(.17,.67,.16,.99);
+  overflow: hidden;
+  background: var(--dark2);
+}
+.wheel-disc .wheel-seg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transform-origin: 50% 50%;
+}
+.wheel-disc .wheel-seg span {
+  display: inline-block;
+  transform: translateY(-70px);
+  filter: drop-shadow(0 0 4px rgba(0,0,0,.5));
+}
+.wheel-hub {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 30px; height: 30px;
+  transform: translate(-50%,-50%);
+  background: radial-gradient(circle, #fff, var(--secondary));
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  z-index: 2;
+  box-shadow: 0 0 12px var(--glow);
+}
+.wheel-result {
+  margin-top: 12px;
+  min-height: 50px;
+  font-size: .95rem;
   color: var(--secondary);
-  letter-spacing: 2px;
-  line-height: 1.8;
+  line-height: 1.6;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.wheel-result.win strong { color: #5fffb0 !important; text-shadow: 0 0 12px rgba(95,255,176,.5); }
+.wheel-result.lose strong { color: #ff8a8a !important; text-shadow: 0 0 12px rgba(255,138,138,.4); }
+#spinWheelBtn:disabled { opacity: .5; cursor: default; transform: none; }
+
+/* ============================================================
+   GAME 7: BUTTERFLY RESCUE
+   ============================================================ */
+.rescue-grid {
+  display: grid;
+  gap: 8px;
+  justify-content: center;
+}
+.rescue-bubble {
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.35), rgba(255,95,162,.12) 60%, rgba(255,95,162,.05));
+  border: 2px solid rgba(255,255,255,.35);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: min(1.6rem,5vw);
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 0 14px rgba(255,255,255,.15), inset 0 0 10px rgba(255,255,255,.2);
+  animation: bubble-float 3s ease-in-out infinite;
+  transition: transform .25s, opacity .4s;
+}
+@keyframes bubble-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+.rescue-bubble.popped {
+  animation: bubble-pop .35s ease forwards;
+  cursor: default;
+  border-color: rgba(255,95,162,.4);
+  background: rgba(255,95,162,.1);
+  box-shadow: 0 0 16px var(--glow);
+}
+@keyframes bubble-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+.rescue-bubble.flutter-away {
+  animation: butterfly-flutter-away 1.2s ease forwards;
+}
+@keyframes butterfly-flutter-away {
+  0%   { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-40px) scale(.7); opacity: .35; }
+}
+.rescue-bubble.empty-pop {
+  border-color: rgba(255,255,255,.15);
+  background: rgba(255,255,255,.04);
+  box-shadow: none;
+  opacity: .45;
 }
 </style>
+
 </head>
 <body>
 
@@ -1442,13 +1840,38 @@ html, body {
 <div class="scene" id="scene-gallery">
   <div class="gallery-title">📸 Memory Wall</div>
   <div class="memory-wall" id="memoryWall"></div>
-  <button class="next-btn" id="toPortalBtn" style="margin-top:4px">Enter Game World 🎮</button>
+  <button class="next-btn" id="toPortalBtn" style="margin-top:4px">Open Our Album 📖</button>
   <div class="photo-modal" id="photoModal">
     <div class="photo-modal-inner">
       <div class="photo-modal-img" id="photoModalImg"></div>
       <div class="photo-modal-caption" id="photoModalCaption"></div>
     </div>
     <button class="photo-close" id="photoClose">Close 💫</button>
+  </div>
+</div>
+
+<!-- ====================================================
+     SCENE 8.5: PHOTO ALBUM
+     ==================================================== -->
+<div class="scene" id="scene-album">
+  <div class="album-title">📖 Our Memories Album</div>
+  <div class="album-sub">Every page, a little piece of you 💕</div>
+
+  <div class="album-stage" id="albumStage">
+    <div class="album-book" id="albumBook">
+      <!-- Pages injected by JS -->
+    </div>
+
+    <button class="album-nav-arrow album-nav-prev" id="albumPrevBtn" aria-label="Previous page">‹</button>
+    <button class="album-nav-arrow album-nav-next" id="albumNextBtn" aria-label="Next page">›</button>
+  </div>
+
+  <div class="album-dots" id="albumDots"></div>
+
+  <div class="album-finale" id="albumFinale">
+    <div class="album-finale-glow">💖</div>
+    <div class="album-finale-msg">This is only the beginning, Supriya...<br>So much more waits ahead. ✨</div>
+    <button class="next-btn album-continue-btn" id="toPortalFromAlbumBtn">Continue the Journey 🎮</button>
   </div>
 </div>
 
@@ -1471,30 +1894,27 @@ html, body {
 <div class="scene" id="scene-games">
   <div class="games-header">
     <div class="games-title">🎮 Birthday Game World</div>
-    <div style="font-size:.8rem;color:rgba(255,214,234,.5);letter-spacing:2px;margin-top:4px">Collect all rewards to unlock the secret</div>
+    <div style="font-size:.8rem;color:rgba(255,214,234,.5);letter-spacing:2px;margin-top:4px">Play any games you like — go whenever you're ready</div>
     <div class="reward-tracker" id="rewardTracker"></div>
   </div>
   <div class="games-grid" id="gamesGrid"></div>
-</div>
 
-<!-- SECRET UNLOCK OVERLAY -->
-<div class="secret-unlock-overlay" id="secretUnlockOverlay">
-  <div style="font-size:4rem;animation:heartbeat-big 1.5s ease-in-out infinite">🔮</div>
-  <div class="unlock-title">All Rewards Collected!</div>
-  <div class="unlock-sub">The secret door has opened.<br>Something magical awaits you...</div>
-  <button class="next-btn" id="toSecretBtn">Enter the Secret Room ✨</button>
+  <div class="games-continue-wrap">
+    <button class="next-btn" id="toSecretBtn">Continue to Secret Room ✨</button>
+    <div style="font-size:.75rem;color:rgba(255,214,234,.45);margin-top:8px">You can go anytime — finishing every game is optional</div>
+  </div>
 </div>
 
 <!-- ====================================================
      GAME MODALS
      ==================================================== -->
 
-<!-- Game 1: Butterfly Garden -->
+<!-- Game 1: Butterfly Garden (MAIN GAME) -->
 <div class="game-modal" id="gameModal1">
   <div class="game-panel">
     <h3>🦋 Butterfly Garden</h3>
     <p style="font-size:.8rem;color:var(--secondary);margin-bottom:8px">
-      Catch 15 magical butterflies!
+      Catch the glowing butterflies as they flutter by!
     </p>
 
     <canvas id="butterflyCanvas" class="game-canvas" width="300" height="250"></canvas>
@@ -1511,12 +1931,17 @@ html, body {
 <div class="game-modal" id="gameModal2">
   <div class="game-panel">
     <h3>🧠 Memory Match</h3>
+    <p style="font-size:.8rem;color:var(--secondary);margin-bottom:8px">
+      Find all 8 pairs — you only get 15 attempts!
+    </p>
 
     <div class="memory-grid" id="memoryGrid"></div>
 
     <div style="margin-top:8px;font-size:.85rem;color:var(--secondary)">
-      Pairs: <span id="memPairs">0</span> / 8
+      Pairs: <span id="memPairs">0</span> / 8 &nbsp;•&nbsp; Attempts left: <span id="memTries">15</span>
     </div>
+    <div id="memMessage" class="hunt-message"></div>
+    <button id="memTryAgainBtn" class="next-btn try-again-btn">Try Again 🔄</button>
   </div>
 
   <button class="game-close-btn" id="closeGame2">← Back</button>
@@ -1526,12 +1951,17 @@ html, body {
 <div class="game-modal" id="gameModal3">
   <div class="game-panel">
     <h3>🎁 Hidden Gift Hunt</h3>
+    <p style="font-size:.8rem;color:var(--secondary);margin-bottom:8px">
+      Find all 5 hidden gifts among the petals — you only get 15 clicks!
+    </p>
 
     <div class="hunt-grid" id="huntGrid"></div>
 
-    <div style="margin-top:8px;font-size:.85rem;color:var(--secondary)">
-      Found: <span id="huntFound">0</span> / 5
+    <div style="margin-top:10px;font-size:.85rem;color:var(--secondary)">
+      Found: <span id="huntFound">0</span> / 5 &nbsp;•&nbsp; Attempts left: <span id="huntTries">15</span>
     </div>
+    <div id="huntMessage" class="hunt-message"></div>
+    <button id="huntTryAgainBtn" class="next-btn try-again-btn">Try Again 🔄</button>
   </div>
 
   <button class="game-close-btn" id="closeGame3">← Back</button>
@@ -1571,30 +2001,45 @@ html, body {
 <div class="game-modal" id="gameModal6">
   <div class="game-panel">
     <h3>🎡 Lucky Birthday Wheel</h3>
+    <p style="font-size:.8rem;color:var(--secondary);margin-bottom:8px">
+      Spin to reveal a birthday blessing — only 3 spins allowed!
+    </p>
 
-    <div id="birthdayWheel"></div>
+    <div class="wheel-wrap">
+      <div class="wheel-pointer">▼</div>
+      <div id="birthdayWheel" class="wheel-disc"></div>
+    </div>
 
-    <button id="spinWheelBtn" class="next-btn">
+    <div style="margin-top:8px;font-size:.85rem;color:var(--secondary)">
+      Spins left: <span id="wheelTries">3</span>
+    </div>
+
+    <button id="spinWheelBtn" class="next-btn" style="margin-top:14px">
       Spin Wheel ✨
     </button>
 
-    <div id="wheelResult" style="margin-top:10px"></div>
+    <div id="wheelResult" class="wheel-result"></div>
+    <button id="wheelTryAgainBtn" class="next-btn try-again-btn">Try Again 🔄</button>
   </div>
 
   <button class="game-close-btn" id="closeGame6">← Back</button>
 </div>
 
-<!-- Game 7: Crystal Memory Cave -->
+<!-- Game 7: Butterfly Rescue (optional mini game) -->
 <div class="game-modal" id="gameModal7">
   <div class="game-panel">
-    <h3>💎 Crystal Memory Cave</h3>
+    <h3>🐰 Butterfly Rescue</h3>
+    <p style="font-size:.8rem;color:var(--secondary);margin-bottom:8px">
+      Tap the bubbles to free the trapped butterflies — some bubbles are empty, you only get 15 taps!
+    </p>
 
-    <div id="crystalGrid" class="memory-grid"></div>
+    <div id="rescueGrid" class="rescue-grid"></div>
 
     <div style="margin-top:8px;font-size:.85rem;color:var(--secondary)">
-      Crystals Found:
-      <span id="crystalScore">0</span> / 8
+      Rescued: <span id="rescueScore">0</span> / 10 &nbsp;•&nbsp; Taps left: <span id="rescueTries">15</span>
     </div>
+    <div id="rescueMessage" class="hunt-message"></div>
+    <button id="rescueTryAgainBtn" class="next-btn try-again-btn">Try Again 🔄</button>
   </div>
 
   <button class="game-close-btn" id="closeGame7">← Back</button>
@@ -2334,7 +2779,242 @@ document.getElementById('photoClose').addEventListener('click', () => {
   document.getElementById('photoModal').classList.remove('visible');
 });
 
-document.getElementById('toPortalBtn').addEventListener('click', () => goTo('scene-portal'));
+document.getElementById('toPortalBtn').addEventListener('click', () => {
+  goTo('scene-album');
+  buildAlbum();
+});
+
+/* ============================================================
+   SCENE 8.5: PHOTO ALBUM
+   A flip-book style album. Each page tries to load a real photo
+   from src="S1.jpg", "S2.jpg", "S3.jpg"... placed next to this
+   HTML file. If a photo is missing, a generated romantic
+   placeholder (same safe pattern as the puzzle game) is used
+   instead, so the album never breaks or shows a broken image icon.
+   ============================================================ */
+const albumPages = [
+  { src: 'S1.jpg', caption: 'Every story has a beginning — here\'s ours with you. 💖' },
+  { src: 'S2.jpg', caption: 'That smile could light up the darkest room.' },
+  { src: 'S3.jpg', caption: 'A moment we never wanted to end.' },
+  { src: 'S4.jpg', caption: 'Laughter looks so beautiful on you.' },
+  { src: 'S5.jpg', caption: 'Some memories just feel like home.' },
+  { src: 'S6.jpg', caption: 'You make ordinary days feel like celebrations.' },
+  { src: 'S7.jpg', caption: 'Forever grateful for moments like this one.' },
+  { src: 'S8.jpg', caption: 'And the best memories? Still being made. ✨' }
+];
+
+const albumImageCache = {};   // src -> resolved <img src> or placeholder data-URL
+const albumImageLoading = {}; // src -> in-flight promise
+
+function makeAlbumPlaceholderImage(label) {
+  const c = document.createElement('canvas');
+  c.width = 480; c.height = 480;
+  const ctx = c.getContext('2d');
+
+  const grad = ctx.createRadialGradient(240, 180, 20, 240, 240, 340);
+  grad.addColorStop(0, '#ff9ec7');
+  grad.addColorStop(0.5, '#ff5fa2');
+  grad.addColorStop(1, '#5c1145');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 480, 480);
+
+  ctx.globalAlpha = 0.16;
+  ctx.fillStyle = '#ffffff';
+  for (let i = 0; i < 8; i++) {
+    const x = Math.random() * 480, y = Math.random() * 480, r = 20 + Math.random() * 60;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  ctx.fillStyle = 'rgba(255,255,255,.92)';
+  ctx.font = '700 60px Georgia, serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.shadowColor = 'rgba(0,0,0,.35)';
+  ctx.shadowBlur = 12;
+  ctx.fillText('💖', 240, 200);
+  ctx.font = 'italic 32px Georgia, serif';
+  ctx.fillText(label, 240, 280);
+  ctx.shadowBlur = 0;
+
+  return c.toDataURL('image/png');
+}
+
+function loadAlbumImage(src, label) {
+  if (albumImageCache[src]) return Promise.resolve(albumImageCache[src]);
+  if (albumImageLoading[src]) return albumImageLoading[src];
+
+  albumImageLoading[src] = new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      albumImageCache[src] = src;
+      delete albumImageLoading[src];
+      resolve(src);
+    };
+    img.onerror = () => {
+      const placeholder = makeAlbumPlaceholderImage(label);
+      albumImageCache[src] = placeholder;
+      delete albumImageLoading[src];
+      resolve(placeholder);
+    };
+    img.src = src;
+  });
+
+  return albumImageLoading[src];
+}
+
+let albumCurrentIndex = 0;
+let albumFlipping = false;
+let albumSwipeStartX = null;
+
+function buildAlbum() {
+  const book = document.getElementById('albumBook');
+  const dotsWrap = document.getElementById('albumDots');
+  const finale = document.getElementById('albumFinale');
+  const prevBtn = document.getElementById('albumPrevBtn');
+  const nextBtn = document.getElementById('albumNextBtn');
+
+  book.innerHTML = '';
+  dotsWrap.innerHTML = '';
+  finale.classList.remove('visible');
+  albumCurrentIndex = 0;
+  albumFlipping = false;
+
+  const rotSeeds = [-2, 1.5, -1, 2, -1.5, 1, -2.5, 1.5];
+
+  albumPages.forEach((p, i) => {
+    const page = document.createElement('div');
+    page.className = 'album-page ' + (i === 0 ? 'state-current' : 'state-stack');
+    page.dataset.idx = i;
+
+    const polaroid = document.createElement('div');
+    polaroid.className = 'album-polaroid';
+    polaroid.style.setProperty('--prot', rotSeeds[i % rotSeeds.length] + 'deg');
+
+    const frame = document.createElement('div');
+    frame.className = 'album-photo-frame';
+    frame.innerHTML = `<span style="font-size:2.4rem;opacity:.6">💗</span>`;
+    polaroid.appendChild(frame);
+
+    const pageNum = document.createElement('div');
+    pageNum.className = 'album-page-number';
+    pageNum.textContent = `Page ${i + 1} / ${albumPages.length}`;
+
+    const caption = document.createElement('div');
+    caption.className = 'album-caption';
+    caption.textContent = p.caption;
+
+    page.appendChild(polaroid);
+    page.appendChild(pageNum);
+    page.appendChild(caption);
+    book.appendChild(page);
+
+    loadAlbumImage(p.src, `Supriya — ${i + 1}`).then((resolvedSrc) => {
+      frame.innerHTML = `<img src="${resolvedSrc}" alt="${p.caption.replace(/"/g, '')}" />`;
+    });
+
+    const dot = document.createElement('button');
+    dot.className = 'album-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Go to page ' + (i + 1));
+    dot.addEventListener('click', () => goToAlbumPage(i));
+    dotsWrap.appendChild(dot);
+  });
+
+  updateAlbumNavState();
+
+  const stage = document.getElementById('albumStage');
+  function onTouchStart(e) { albumSwipeStartX = e.touches[0].clientX; }
+  function onTouchEnd(e) {
+    if (albumSwipeStartX === null) return;
+    const dx = e.changedTouches[0].clientX - albumSwipeStartX;
+    albumSwipeStartX = null;
+    if (Math.abs(dx) < 40) return;
+    if (dx < 0) albumNext(); else albumPrev();
+  }
+  stage.addEventListener('touchstart', onTouchStart, { passive: true });
+  stage.addEventListener('touchend', onTouchEnd, { passive: true });
+
+  function onPrevClick() { albumPrev(); }
+  function onNextClick() { albumNext(); }
+  prevBtn.addEventListener('click', onPrevClick);
+  nextBtn.addEventListener('click', onNextClick);
+
+  gameCleanup['album'] = () => {
+    stage.removeEventListener('touchstart', onTouchStart);
+    stage.removeEventListener('touchend', onTouchEnd);
+    prevBtn.removeEventListener('click', onPrevClick);
+    nextBtn.removeEventListener('click', onNextClick);
+  };
+}
+
+function updateAlbumNavState() {
+  const prevBtn = document.getElementById('albumPrevBtn');
+  const nextBtn = document.getElementById('albumNextBtn');
+  const dots = document.querySelectorAll('.album-dot');
+  const finale = document.getElementById('albumFinale');
+  const isLast = albumCurrentIndex === albumPages.length - 1;
+
+  prevBtn.disabled = albumCurrentIndex === 0;
+  nextBtn.disabled = isLast;
+
+  dots.forEach((d, i) => d.classList.toggle('active', i === albumCurrentIndex));
+
+  if (isLast) {
+    finale.classList.add('visible');
+    launchConfetti(35);
+  } else {
+    finale.classList.remove('visible');
+  }
+}
+
+function flipAlbumTo(targetIndex, direction) {
+  if (albumFlipping || targetIndex < 0 || targetIndex >= albumPages.length || targetIndex === albumCurrentIndex) return;
+  albumFlipping = true;
+
+  const pages = document.querySelectorAll('.album-page');
+  const currentPage = pages[albumCurrentIndex];
+  const targetPage = pages[targetIndex];
+
+  // Reset all pages to a neutral stacked state first
+  pages.forEach((pg, i) => {
+    pg.classList.remove('state-current', 'state-next', 'state-prev', 'state-stack', 'flipping-out', 'flipping-in');
+    if (i !== albumCurrentIndex && i !== targetIndex) pg.classList.add('state-stack');
+  });
+
+  if (direction === 'next') {
+    currentPage.classList.add('flipping-out');
+    targetPage.classList.add('state-current');
+    targetPage.style.zIndex = '4';
+  } else {
+    targetPage.classList.add('flipping-in');
+    currentPage.classList.add('state-stack');
+  }
+
+  albumCurrentIndex = targetIndex;
+  updateAlbumNavState();
+
+  const t = setTimeout(() => {
+    document.querySelectorAll('.album-page').forEach((pg, i) => {
+      pg.classList.remove('flipping-out', 'flipping-in', 'state-next', 'state-prev');
+      pg.style.zIndex = '';
+      pg.classList.toggle('state-current', i === albumCurrentIndex);
+      pg.classList.toggle('state-stack', i !== albumCurrentIndex);
+    });
+    albumFlipping = false;
+  }, 850);
+  cleanupAlbumTimeouts.push(t);
+}
+const cleanupAlbumTimeouts = [];
+
+function albumNext() { flipAlbumTo(albumCurrentIndex + 1, 'next'); }
+function albumPrev() { flipAlbumTo(albumCurrentIndex - 1, 'prev'); }
+function goToAlbumPage(i) { flipAlbumTo(i, i > albumCurrentIndex ? 'next' : 'prev'); }
+
+document.getElementById('toPortalFromAlbumBtn').addEventListener('click', () => {
+  goTo('scene-portal');
+});
 
 /* ============================================================
    SCENE 9: GAME PORTAL
@@ -2353,16 +3033,17 @@ document.getElementById('portalDoor').addEventListener('click', () => {
    SCENE 10-11: GAME WORLD + REWARD SYSTEM
    ============================================================ */
 const gameDefs = [
-  { id:1, name:'Love Cube Puzzle', icon:'🧩', reward:'🌹' },
-  { id:2, name:'Heart Collector',  icon:'💖', reward:'⭐' },
-  { id:3, name:'Rose Catcher',     icon:'🌹', reward:'💌' },
-  { id:4, name:'Balloon Pop',      icon:'🎈', reward:'🎁' },
-  { id:5, name:'Memory Match',     icon:'🧠', reward:'💎' },
-  { id:6, name:'Cake Decoration',  icon:'🎨', reward:'🎂' },
-  { id:7, name:'Hidden Gift Hunt', icon:'🔍', reward:'🔮' }
+  { id:1, name:'Butterfly Garden',     icon:'🦋', reward:'🌹' },
+  { id:2, name:'Memory Match',         icon:'🧠', reward:'⭐' },
+  { id:3, name:'Hidden Gift Hunt',     icon:'🎁', reward:'💌' },
+  { id:4, name:'Star Catcher',         icon:'🌟', reward:'🎁' },
+  { id:5, name:'Cupid Arrow',          icon:'🎯', reward:'💎' },
+  { id:6, name:'Lucky Birthday Wheel', icon:'🎡', reward:'🎂' },
+  { id:7, name:'Butterfly Rescue',     icon:'🐰', reward:'🔮' }
 ];
 
 let gameCompleted = new Set();
+let gamePlayed = new Set(); // tracks which games the player has opened — shown as a soft hint only
 
 function buildGames() {
   const grid = document.getElementById('gamesGrid');
@@ -2398,17 +3079,13 @@ function markGameComplete(id) {
   if (card) { card.classList.add('completed'); card.querySelector('.game-status').textContent = '✓ Completed'; }
   const slot = document.getElementById('reward' + id);
   if (slot) slot.classList.add('earned');
-
-  if (gameCompleted.size === gameDefs.length) {
-    setTimeout(() => {
-      document.getElementById('secretUnlockOverlay').classList.add('visible');
-      launchConfetti(100);
-    }, 1000);
-  }
 }
 
+/* The "Continue to Secret Room" button is ALWAYS clickable — the
+   player decides for themselves whether to keep playing or move on.
+   Nothing is forced and no popup interrupts them; playing every game
+   (or even just one) is entirely optional. */
 document.getElementById('toSecretBtn').addEventListener('click', () => {
-  document.getElementById('secretUnlockOverlay').classList.remove('visible');
   goTo('scene-secret');
   buildSecretRoom();
 });
@@ -2418,7 +3095,11 @@ document.getElementById('toSecretBtn').addEventListener('click', () => {
    ============================================================ */
 function launchGame(id) {
   const modal = document.getElementById('gameModal' + id);
-  if (modal) { modal.classList.add('visible'); initGame(id); }
+  if (modal) {
+    modal.classList.add('visible');
+    initGame(id);
+    gamePlayed.add(id);
+  }
 }
 
 // Close buttons
@@ -2430,415 +3111,880 @@ function launchGame(id) {
   });
 });
 
+/* ------------------------------------------------------------
+   GAME LIFECYCLE MANAGER
+   gameLoops[id]   -> active requestAnimationFrame handle
+   gameCleanup[id] -> function() that removes listeners/intervals
+                       registered by that game's current run
+   ------------------------------------------------------------ */
 let gameLoops = {};
+let gameCleanup = {};
 
 function stopGame(id) {
   if (gameLoops[id]) { cancelAnimationFrame(gameLoops[id]); delete gameLoops[id]; }
+  if (gameCleanup[id]) { gameCleanup[id](); delete gameCleanup[id]; }
 }
 
 function initGame(id) {
   stopGame(id);
   switch(id) {
-    case 1: initPuzzle(); break;
-    case 2: initHeartGame(); break;
-    case 3: initRoseGame(); break;
-    case 4: initBalloonPop(); break;
-    case 5: initMemoryMatch(); break;
-    case 6: initCakeDeco(); break;
-    case 7: initGiftHunt(); break;
+    case 1: initButterflyGarden();  break;
+    case 2: initMemoryMatch();      break;
+    case 3: initGiftHunt();         break;
+    case 4: initStarCatcher();      break;
+    case 5: initCupidArrow();       break;
+    case 6: initLuckyWheel();       break;
+    case 7: initButterflyRescue();  break;
   }
 }
 
-/* ------ GAME 1: Sliding Puzzle ------ */
-function initPuzzle() {
-  const grid = document.getElementById('puzzleGrid');
-  const emojis = ['🌸','💖','🌹','✨','🦋','🌙','⭐','🎀'];
-  const size = 3;
-  let tiles = [...emojis, null]; // 8 tiles + blank
-  let moves = 0;
-
-  function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i+1));
-      [arr[i],arr[j]] = [arr[j],arr[i]];
-    }
-    return arr;
-  }
-  tiles = shuffle([...emojis.slice(0,8), null]);
-
-  const cellSize = Math.min(60, Math.floor(window.innerWidth * .55 / 3));
-  grid.style.gridTemplateColumns = `repeat(3, ${cellSize}px)`;
-
-  function render() {
-    grid.innerHTML = '';
-    tiles.forEach((t, i) => {
-      const cell = document.createElement('div');
-      cell.style.cssText = `width:${cellSize}px;height:${cellSize}px;display:flex;align-items:center;justify-content:center;
-        font-size:${cellSize*.45}px;border-radius:8px;cursor:${t?'pointer':'default'};
-        background:${t?'rgba(255,95,162,.15)':'rgba(0,0,0,.2)'};
-        border:${t?'1px solid rgba(255,95,162,.3)':'1px dashed rgba(255,95,162,.1)'};
-        transition:all .15s;`;
-      if (t) cell.textContent = t;
-      if (t) cell.addEventListener('click', () => move(i));
-      grid.appendChild(cell);
-    });
-    document.getElementById('puzzleMoves').textContent = `Moves: ${moves}`;
-  }
-
-  function move(idx) {
-    const blank = tiles.indexOf(null);
-    const r1 = Math.floor(idx/size), c1 = idx%size;
-    const r2 = Math.floor(blank/size), c2 = blank%size;
-    if (Math.abs(r1-r2)+Math.abs(c1-c2) !== 1) return;
-    [tiles[idx], tiles[blank]] = [tiles[blank], tiles[idx]];
-    moves++;
-    render();
-    if (isSolved()) {
-      showToast('🧩 Puzzle solved!');
-      markGameComplete(1);
-    }
-  }
-
-  function isSolved() {
-    for (let i = 0; i < 8; i++) if (tiles[i] !== emojis[i]) return false;
-    return tiles[8] === null;
-  }
-  render();
-}
-
-/* ------ GAME 2: Heart Collector ------ */
-function initHeartGame() {
-  const canvas = document.getElementById('heartCanvas');
+/* Shared helper: size a game canvas to its CSS box using devicePixelRatio,
+   and keep it correctly scaled if the modal is open during a resize/rotate. */
+function setupGameCanvas(canvas, cssWidth, cssHeight) {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.style.width = cssWidth + 'px';
+  canvas.style.height = cssHeight + 'px';
+  canvas.width = Math.round(cssWidth * dpr);
+  canvas.height = Math.round(cssHeight * dpr);
   const ctx = canvas.getContext('2d');
-  const W = canvas.width = canvas.offsetWidth || 300;
-  const H = canvas.height = 250;
-  let score = 0, lives = 3, running = true;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, W: cssWidth, H: cssHeight };
+}
+
+function gameCanvasSize(canvas, fallbackW, fallbackH) {
+  const w = canvas.clientWidth || canvas.parentElement.clientWidth || fallbackW;
+  return { w: Math.min(w, fallbackW), h: fallbackH };
+}
+
+/* ------ GAME 1: Butterfly Garden (MAIN GAME) ------
+   Glowing butterflies flutter smoothly across the canvas in a gentle
+   left-to-right drifting flight path with vertical bob/wave motion.
+   Tap/click a butterfly to catch it. Catching 15 butterflies wins. */
+function initButterflyGarden() {
+  const canvasEl = document.getElementById('butterflyCanvas');
+  const size = gameCanvasSize(canvasEl, 300, 250);
+  const { ctx, W, H } = setupGameCanvas(canvasEl, size.w, size.h);
+
   const GOAL = 15;
-  let items = [];
-  let basket = { x: W/2, w: 60, h: 16, y: H - 30 };
+  let score = 0;
+  let running = true;
+  let butterflies = [];
+  let spawnTimer = 0;
   let lastTime = 0;
 
-  function spawnItem() {
-    items.push({
-      x: 20 + Math.random() * (W-40),
-      y: -20,
-      speed: 1.5 + Math.random() * 1.5,
-      type: Math.random() > .3 ? 'heart' : 'skull',
-      size: 20
+  const palettes = [
+    ['#ff5fa2', '#ffd6ea'],
+    ['#a855f7', '#e9d5ff'],
+    ['#60cdff', '#d6f3ff'],
+    ['#ffd84d', '#fff3c4'],
+    ['#ff85b8', '#fff0f6']
+  ];
+
+  function spawnButterfly() {
+    const fromLeft = Math.random() < 0.5;
+    const colors = palettes[Math.floor(Math.random() * palettes.length)];
+    butterflies.push({
+      x: fromLeft ? -24 : W + 24,
+      baseY: 30 + Math.random() * (H - 60),
+      y: 0,
+      dir: fromLeft ? 1 : -1,
+      speed: 0.6 + Math.random() * 0.7,
+      size: 12 + Math.random() * 7,
+      wingPhase: Math.random() * Math.PI * 2,
+      wingSpeed: 0.18 + Math.random() * 0.08,
+      bobPhase: Math.random() * Math.PI * 2,
+      bobAmp: 14 + Math.random() * 16,
+      colorA: colors[0],
+      colorB: colors[1],
+      caught: false,
+      caughtT: 0
     });
   }
+  spawnButterfly();
 
-  // Controls
-  let keys = {};
-  function onKey(e) { keys[e.key] = e.type === 'keydown'; }
-  document.removeEventListener('keydown', onKey);
-  document.removeEventListener('keyup', onKey);
+  function drawButterfly(b) {
+    b.y = b.baseY + Math.sin(b.bobPhase) * b.bobAmp;
+    ctx.save();
+    ctx.translate(b.x, b.y);
+    ctx.rotate(b.dir === 1 ? 0 : Math.PI);
 
-  document.addEventListener('keydown', onKey);
-  document.addEventListener('keyup', onKey);
-  canvas.addEventListener('touchmove', e => {
+    if (b.caught) {
+      const t = b.caughtT / 18;
+      ctx.globalAlpha = Math.max(0, 1 - t);
+      const sc = 1 + t * 0.6;
+      ctx.scale(sc, sc);
+    }
+
+    const flap = Math.sin(b.wingPhase) * 0.9; // wing flap amount
+    const s = b.size;
+
+    ctx.shadowColor = b.colorA;
+    ctx.shadowBlur = 14;
+
+    // Left wing
+    ctx.save();
+    ctx.scale(1 - Math.abs(flap) * 0.35, 1);
+    ctx.fillStyle = b.colorA;
+    ctx.beginPath();
+    ctx.ellipse(-s * 0.6, -s * 0.3, s * 0.7, s * 0.55, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = b.colorB;
+    ctx.beginPath();
+    ctx.ellipse(-s * 0.5, s * 0.25, s * 0.45, s * 0.4, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Right wing
+    ctx.save();
+    ctx.scale(1 - Math.abs(flap) * 0.35, 1);
+    ctx.fillStyle = b.colorA;
+    ctx.beginPath();
+    ctx.ellipse(s * 0.6, -s * 0.3, s * 0.7, s * 0.55, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = b.colorB;
+    ctx.beginPath();
+    ctx.ellipse(s * 0.5, s * 0.25, s * 0.45, s * 0.4, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Body
+    ctx.shadowBlur = 4;
+    ctx.fillStyle = '#3a1030';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, s * 0.1, s * 0.7, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function handleTap(clientX, clientY) {
+    if (!running) return;
+    const rect = canvasEl.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    for (let i = butterflies.length - 1; i >= 0; i--) {
+      const b = butterflies[i];
+      if (!b.caught && Math.hypot(x - b.x, y - b.y) < b.size * 1.8) {
+        b.caught = true;
+        score++;
+        const scoreEl = document.getElementById('butterflyScore');
+        if (scoreEl) scoreEl.textContent = score;
+        if (score >= GOAL) {
+          running = false;
+          markGameComplete(1);
+          showToast('🦋 Butterfly Garden Complete!');
+        }
+        break;
+      }
+    }
+  }
+
+  function onClick(e) { handleTap(e.clientX, e.clientY); }
+  function onTouch(e) {
     e.preventDefault();
-    basket.x = e.touches[0].clientX - canvas.getBoundingClientRect().left;
-  }, {passive:false});
-  canvas.addEventListener('mousemove', e => {
-    basket.x = e.clientX - canvas.getBoundingClientRect().left;
-  });
-
-  let spawnTimer = 0;
+    const t = e.changedTouches[0];
+    handleTap(t.clientX, t.clientY);
+  }
+  canvasEl.addEventListener('click', onClick);
+  canvasEl.addEventListener('touchstart', onTouch, { passive: false });
 
   function loop(ts) {
-    const dt = ts - lastTime; lastTime = ts;
-    if (!running) return;
-
-    // Move basket
-    if (keys['ArrowLeft'] || keys['a']) basket.x = Math.max(basket.w/2, basket.x - 4);
-    if (keys['ArrowRight'] || keys['d']) basket.x = Math.min(W - basket.w/2, basket.x + 4);
-    basket.x = Math.max(basket.w/2, Math.min(W-basket.w/2, basket.x));
+    if (!lastTime) lastTime = ts;
+    const dt = ts - lastTime;
+    lastTime = ts;
 
     spawnTimer += dt;
-    if (spawnTimer > 700) { spawnItem(); spawnTimer = 0; }
-
-    ctx.clearRect(0,0,W,H);
-
-    // Draw items
-    items = items.filter(item => {
-      item.y += item.speed;
-      ctx.font = item.size + 'px serif';
-      ctx.fillText(item.type === 'heart' ? '💖' : '💀', item.x - item.size/2, item.y);
-      // Catch check
-      if (item.y > basket.y - item.size/2 && item.y < basket.y + basket.h &&
-          Math.abs(item.x - basket.x) < basket.w/2 + item.size/2) {
-        if (item.type === 'heart') {
-          score++;
-          document.getElementById('heartScore').textContent = score;
-          if (score >= GOAL) { running = false; markGameComplete(2); showToast('💖 Hearts collected!'); }
-        } else {
-          lives--;
-          document.getElementById('heartLives').textContent = lives;
-          if (lives <= 0) { running = false; showToast('💀 Game Over! Try again.'); initHeartGame(); }
-        }
-        return false;
-      }
-      return item.y < H + 30;
-    });
-
-    // Draw basket
-    ctx.fillStyle = 'rgba(255,95,162,.4)';
-    ctx.beginPath();
-    ctx.roundRect(basket.x - basket.w/2, basket.y, basket.w, basket.h, 4);
-    ctx.fill();
-    ctx.strokeStyle = 'var(--primary)';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    if (running) gameLoops[2] = requestAnimationFrame(loop);
-  }
-  gameLoops[2] = requestAnimationFrame(loop);
-}
-
-/* ------ GAME 3: Rose Catcher ------ */
-function initRoseGame() {
-  const canvas = document.getElementById('roseCanvas');
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width = canvas.offsetWidth || 300;
-  const H = canvas.height = 250;
-  let score = 0, running = true;
-  const GOAL = 10;
-  let roses = [];
-  let basket = { x: W/2, w: 60, y: H - 30 };
-  let spawnT = 0, lastTime = 0;
-
-  canvas.addEventListener('touchmove', e => {
-    basket.x = e.touches[0].clientX - canvas.getBoundingClientRect().left;
-  }, {passive:true});
-  canvas.addEventListener('mousemove', e => {
-    basket.x = e.clientX - canvas.getBoundingClientRect().left;
-  });
-
-  function loop(ts) {
-    const dt = ts - lastTime; lastTime = ts;
-    if (!running) return;
-    basket.x = Math.max(30, Math.min(W-30, basket.x));
-
-    spawnT += dt;
-    if (spawnT > 900) {
-      roses.push({ x: 20 + Math.random()*(W-40), y:-20, speed: 1.2+Math.random()*1.2 });
-      spawnT = 0;
+    if (spawnTimer > 900 && butterflies.filter(b => !b.caught).length < 4) {
+      spawnButterfly();
+      spawnTimer = 0;
     }
 
-    ctx.clearRect(0,0,W,H);
-    roses = roses.filter(r => {
-      r.y += r.speed;
-      ctx.font = '22px serif';
-      ctx.fillText('🌹', r.x-11, r.y);
-      if (r.y > basket.y-10 && r.y < basket.y+20 && Math.abs(r.x-basket.x) < basket.w/2+11) {
-        score++; document.getElementById('roseScore').textContent = score;
-        if (score >= GOAL) { running=false; markGameComplete(3); showToast('🌹 All roses caught!'); }
-        return false;
+    ctx.clearRect(0, 0, W, H);
+
+    butterflies = butterflies.filter(b => {
+      b.wingPhase += b.wingSpeed;
+      b.bobPhase += 0.04;
+      if (b.caught) {
+        b.caughtT++;
+        drawButterfly(b);
+        return b.caughtT < 18;
       }
-      return r.y < H+30;
+      b.x += b.speed * b.dir;
+      drawButterfly(b);
+      return b.dir === 1 ? b.x < W + 30 : b.x > -30;
     });
 
-    ctx.fillStyle='rgba(255,95,162,.35)';
-    ctx.beginPath(); ctx.roundRect(basket.x-30,basket.y,60,16,4); ctx.fill();
-    ctx.strokeStyle='var(--primary)'; ctx.lineWidth=2; ctx.stroke();
-
-    if (running) gameLoops[3] = requestAnimationFrame(loop);
+    if (running) gameLoops[1] = requestAnimationFrame(loop);
   }
-  gameLoops[3] = requestAnimationFrame(loop);
+  gameLoops[1] = requestAnimationFrame(loop);
+
+  gameCleanup[1] = () => {
+    running = false;
+    canvasEl.removeEventListener('click', onClick);
+    canvasEl.removeEventListener('touchstart', onTouch);
+  };
 }
 
-/* ------ GAME 4: Balloon Pop ------ */
-function initBalloonPop() {
-  const canvas = document.getElementById('balloonPopCanvas');
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width = canvas.offsetWidth || 300;
-  const H = canvas.height = 250;
-  let score = 0, timeLeft = 30, running = true;
-  const GOAL = 20;
-  let balloons = [];
-  let lastSpawn = 0, lastTime = 0, elapsed = 0;
-
-  function spawnBalloon() {
-    const emojis = ['🎈','🩷','💜','🩵'];
-    balloons.push({
-      x: 20 + Math.random()*(W-40),
-      y: H + 30,
-      speed: .6 + Math.random()*.8,
-      size: 20 + Math.random()*16,
-      emoji: emojis[Math.floor(Math.random()*emojis.length)]
-    });
-  }
-
-  function onClick(e) {
-    const rect = canvas.getBoundingClientRect();
-    const cx = (e.clientX||e.touches[0].clientX) - rect.left;
-    const cy = (e.clientY||e.touches[0].clientY) - rect.top;
-    balloons = balloons.filter(b => {
-      if (Math.hypot(cx-b.x, cy-b.y) < b.size) {
-        score++; document.getElementById('popScore').textContent = score;
-        if (score >= GOAL) { running=false; markGameComplete(4); showToast('🎈 Pop! All balloons popped!'); }
-        return false;
-      }
-      return true;
-    });
-  }
-  canvas.addEventListener('click', onClick);
-  canvas.addEventListener('touchstart', onClick, {passive:true});
-
-  const timerInterval = setInterval(() => {
-    if (!running) { clearInterval(timerInterval); return; }
-    timeLeft--;
-    document.getElementById('popTime').textContent = timeLeft;
-    if (timeLeft <= 0) {
-      running = false;
-      clearInterval(timerInterval);
-      if (score < GOAL) showToast(`⏰ Time's up! You got ${score}/${GOAL}. Try again!`);
-    }
-  }, 1000);
-
-  function loop(ts) {
-    const dt = ts - lastTime; lastTime = ts;
-    if (!running) return;
-    lastSpawn += dt;
-    if (lastSpawn > 600) { spawnBalloon(); lastSpawn = 0; }
-    ctx.clearRect(0,0,W,H);
-    balloons.forEach(b => {
-      b.y -= b.speed;
-      ctx.font = b.size + 'px serif';
-      ctx.fillText(b.emoji, b.x - b.size/2, b.y);
-    });
-    balloons = balloons.filter(b => b.y > -50);
-    if (running) gameLoops[4] = requestAnimationFrame(loop);
-  }
-  gameLoops[4] = requestAnimationFrame(loop);
-}
-
-/* ------ GAME 5: Memory Match ------ */
+/* ------ GAME 2: Memory Match ------
+   Classic pair-matching with 8 emoji pairs (16 cards, 4x4 grid).
+   Max 15 attempts (one attempt = one pair flipped, match or not).
+   Finding all 8 pairs = SUCCESS. Running out of attempts = FAIL,
+   grid locks and a "Try Again" button restarts the same game. */
 function initMemoryMatch() {
   const grid = document.getElementById('memoryGrid');
+  grid.innerHTML = '';
+  const messageEl = document.getElementById('memMessage');
+  const tryAgainBtn = document.getElementById('memTryAgainBtn');
+  if (messageEl) { messageEl.textContent = ''; messageEl.className = 'hunt-message'; }
+  if (tryAgainBtn) tryAgainBtn.classList.remove('visible');
+
+  const MAX_TRIES = 15;
   const emojis = ['🌸','💖','🌹','✨','🦋','🌙','⭐','🎀'];
-  let cards = [...emojis,...emojis].sort(()=>Math.random()-.5)
-    .map((e,i) => ({ id:i, emoji:e, flipped:false, matched:false }));
-  let first=null, second=null, lock=false, pairs=0, flips=0;
-  grid.innerHTML='';
+  let cards = [...emojis, ...emojis]
+    .sort(() => Math.random() - 0.5)
+    .map((e, i) => ({ id: i, emoji: e, flipped: false, matched: false }));
+
+  let first = null, second = null, lock = false, pairs = 0, tries = 0, over = false;
+
+  const cellPx = Math.min(60, Math.floor((window.innerWidth * 0.8 - 40) / 4));
+  grid.style.gridTemplateColumns = `repeat(4, ${cellPx}px)`;
+
+  const timeouts = [];
+  const clickHandlers = [];
+
+  function endGame(won) {
+    over = true;
+    if (messageEl) {
+      messageEl.textContent = won
+        ? '🎉 Perfect memory — all pairs found!'
+        : '💔 Out of attempts — try again!';
+      messageEl.className = 'hunt-message ' + (won ? 'win' : 'lose');
+    }
+    if (won) {
+      markGameComplete(2);
+      showToast('🧠 Perfect memory!');
+    } else {
+      showToast('💨 Out of attempts!');
+      if (tryAgainBtn) tryAgainBtn.classList.add('visible');
+    }
+  }
 
   cards.forEach(card => {
     const el = document.createElement('div');
-    el.className='mem-card';
+    el.className = 'mem-card';
+    el.style.width = cellPx + 'px';
+    el.style.height = cellPx + 'px';
     el.dataset.id = card.id;
-    el.textContent='🌸';
-    el.style.filter='brightness(0)';
-    el.addEventListener('click', () => {
-      if (lock || card.flipped || card.matched) return;
-      card.flipped=true;
-      el.classList.add('flipped');
-      el.textContent=card.emoji;
-      el.style.filter='';
-      flips++; document.getElementById('memFlips').textContent=flips;
+    el.textContent = '❓';
 
-      if (!first) { first={card,el}; return; }
-      second={card,el}; lock=true;
+    const handler = () => {
+      if (over || lock || card.flipped || card.matched) return;
+      card.flipped = true;
+      el.classList.add('flipped');
+      el.textContent = card.emoji;
+
+      if (!first) { first = { card, el }; return; }
+
+      second = { card, el };
+      lock = true;
+      tries++;
+      const triesEl = document.getElementById('memTries');
+      if (triesEl) triesEl.textContent = Math.max(0, MAX_TRIES - tries);
+
       if (first.card.emoji === second.card.emoji) {
-        first.card.matched=second.card.matched=true;
-        first.el.classList.add('matched'); second.el.classList.add('matched');
-        pairs++; document.getElementById('memPairs').textContent=pairs;
-        first=second=null; lock=false;
-        if (pairs===8) { markGameComplete(5); showToast('🧠 Perfect memory!'); }
+        first.card.matched = second.card.matched = true;
+        first.el.classList.add('matched');
+        second.el.classList.add('matched');
+        pairs++;
+        const pairsEl = document.getElementById('memPairs');
+        if (pairsEl) pairsEl.textContent = pairs;
+        first = second = null;
+        lock = false;
+        if (pairs === 8) { endGame(true); return; }
       } else {
-        setTimeout(()=>{
-          first.card.flipped=false; second.card.flipped=false;
-          first.el.classList.remove('flipped'); second.el.classList.remove('flipped');
-          first.el.textContent='🌸'; first.el.style.filter='brightness(0)';
-          second.el.textContent='🌸'; second.el.style.filter='brightness(0)';
-          first=second=null; lock=false;
-        }, 900);
+        const t = setTimeout(() => {
+          first.card.flipped = false;
+          second.card.flipped = false;
+          first.el.classList.remove('flipped');
+          second.el.classList.remove('flipped');
+          first.el.textContent = '❓';
+          second.el.textContent = '❓';
+          first = second = null;
+          lock = false;
+          if (!over && tries >= MAX_TRIES && pairs < 8) endGame(false);
+        }, 850);
+        timeouts.push(t);
+        return;
       }
-    });
+
+      if (!over && tries >= MAX_TRIES && pairs < 8) endGame(false);
+    };
+
+    el.addEventListener('click', handler);
+    clickHandlers.push({ el, handler });
     grid.appendChild(el);
   });
+
+  const pairsEl0 = document.getElementById('memPairs');
+  if (pairsEl0) pairsEl0.textContent = '0';
+  const triesEl0 = document.getElementById('memTries');
+  if (triesEl0) triesEl0.textContent = String(MAX_TRIES);
+
+  function onTryAgain() { initGame(2); }
+  if (tryAgainBtn) tryAgainBtn.addEventListener('click', onTryAgain);
+
+  gameCleanup[2] = () => {
+    timeouts.forEach(clearTimeout);
+    clickHandlers.forEach(({ el, handler }) => el.removeEventListener('click', handler));
+    if (tryAgainBtn) tryAgainBtn.removeEventListener('click', onTryAgain);
+  };
 }
 
-/* ------ GAME 6: Cake Decoration ------ */
-function initCakeDeco() {
-  const area = document.getElementById('decoArea');
-  const palette = document.getElementById('decoPalette');
-  const decoItems = ['🌸','💖','⭐','🦋','🎀','🌹','✨','🍓'];
-  area.innerHTML = `<div style="text-align:center;padding-top:20%;font-size:3rem;opacity:.5;">🎂</div>`;
-  palette.innerHTML = '';
-  let placed = 0;
-
-  decoItems.forEach(d => {
-    const el = document.createElement('div');
-    el.className='deco-item';
-    el.textContent=d;
-    el.draggable=true;
-    el.addEventListener('dragstart', e => { e.dataTransfer.setData('emoji', d); });
-    el.addEventListener('click', () => {
-      // fallback for mobile: place at random position
-      placeDeco(d, 10+Math.random()*80, 10+Math.random()*75);
-    });
-    palette.appendChild(el);
-  });
-
-  area.addEventListener('dragover', e => e.preventDefault());
-  area.addEventListener('drop', e => {
-    e.preventDefault();
-    const emoji = e.dataTransfer.getData('emoji');
-    const rect = area.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width)*100;
-    const y = ((e.clientY - rect.top) / rect.height)*100;
-    placeDeco(emoji, x, y);
-  });
-
-  function placeDeco(emoji, x, y) {
-    if (placed >= 5) { markGameComplete(6); showToast('🎨 Beautiful cake!'); return; }
-    const el = document.createElement('div');
-    el.className='placed-deco';
-    el.textContent=emoji;
-    el.style.left=x+'%'; el.style.top=y+'%';
-    area.appendChild(el);
-    placed++;
-    document.getElementById('decoCount').textContent=placed;
-    if (placed >= 5) { markGameComplete(6); showToast('🎨 Cake decorated! Beautiful!'); }
-  }
-}
-
-/* ------ GAME 7: Hidden Gift Hunt ------ */
+/* ------ GAME 3: Hidden Gift Hunt ------
+   5x5 grid, 5 hidden gifts among 25 tiles. Max 15 clicks allowed.
+   Reaching 5 found = SUCCESS. Using all 15 tries without finding
+   all 5 = FAIL (grid locks, "Try Again" restarts the same game). */
 function initGiftHunt() {
   const grid = document.getElementById('huntGrid');
   grid.innerHTML = '';
+  const messageEl = document.getElementById('huntMessage');
+  const tryAgainBtn = document.getElementById('huntTryAgainBtn');
+  if (messageEl) { messageEl.textContent = ''; messageEl.className = 'hunt-message'; }
+  if (tryAgainBtn) tryAgainBtn.classList.remove('visible');
+
   const TOTAL = 25;
   const GIFTS = 5;
-  // Place gifts randomly
+  const MAX_TRIES = 15;
   let positions = new Set();
-  while (positions.size < GIFTS) positions.add(Math.floor(Math.random()*TOTAL));
+  while (positions.size < GIFTS) positions.add(Math.floor(Math.random() * TOTAL));
   let found = 0, tries = 0;
+  let over = false;
+
+  const clickHandlers = [];
+
+  const foundEl0 = document.getElementById('huntFound');
+  const triesEl0 = document.getElementById('huntTries');
+  if (foundEl0) foundEl0.textContent = '0';
+  if (triesEl0) triesEl0.textContent = String(MAX_TRIES);
+
+  function endGame(won) {
+    over = true;
+    if (messageEl) {
+      messageEl.textContent = won
+        ? '🎉 You found every hidden gift!'
+        : '💔 Out of attempts — try again!';
+      messageEl.className = 'hunt-message ' + (won ? 'win' : 'lose');
+    }
+    if (won) {
+      markGameComplete(3);
+      showToast('🎁 All gifts found!');
+    } else {
+      showToast('💨 Out of attempts!');
+      if (tryAgainBtn) tryAgainBtn.classList.add('visible');
+    }
+  }
 
   for (let i = 0; i < TOTAL; i++) {
     const cell = document.createElement('div');
-    cell.className='hunt-cell';
-    cell.textContent='❓';
-    cell.addEventListener('click', () => {
-      if (cell.classList.contains('revealed')) return;
+    cell.className = 'hunt-cell';
+    cell.textContent = '🌸';
+
+    const handler = () => {
+      if (over || cell.classList.contains('revealed')) return;
       cell.classList.add('revealed');
       tries++;
-      document.getElementById('huntTries').textContent = tries;
+      const triesEl = document.getElementById('huntTries');
+      if (triesEl) triesEl.textContent = Math.max(0, MAX_TRIES - tries);
+
       if (positions.has(i)) {
-        cell.textContent='🎁';
-        cell.style.background='rgba(255,95,162,.25)';
-        cell.style.boxShadow='0 0 12px var(--glow)';
+        cell.textContent = '🎁';
+        cell.style.background = 'rgba(255,95,162,.25)';
+        cell.style.boxShadow = '0 0 12px var(--glow)';
         found++;
-        document.getElementById('huntFound').textContent=found;
-        if (found >= GIFTS) { markGameComplete(7); showToast('🎁 All gifts found!'); }
+        const foundEl = document.getElementById('huntFound');
+        if (foundEl) foundEl.textContent = found;
+        if (found >= GIFTS) { endGame(true); return; }
       } else {
-        cell.textContent='';
+        cell.textContent = '';
         cell.classList.add('empty');
-        cell.style.opacity='.4';
+        cell.style.opacity = '.4';
       }
-    });
+
+      if (!over && tries >= MAX_TRIES && found < GIFTS) {
+        endGame(false);
+      }
+    };
+
+    cell.addEventListener('click', handler);
+    clickHandlers.push({ el: cell, handler });
     grid.appendChild(cell);
   }
+
+  function onTryAgain() { initGame(3); }
+  if (tryAgainBtn) tryAgainBtn.addEventListener('click', onTryAgain);
+
+  gameCleanup[3] = () => {
+    clickHandlers.forEach(({ el, handler }) => el.removeEventListener('click', handler));
+    if (tryAgainBtn) tryAgainBtn.removeEventListener('click', onTryAgain);
+  };
+}
+
+/* ------ GAME 4: Star Catcher ------
+   Stars fall from the top; tap/click them before they hit the bottom.
+   Catch 20 stars to win. Endless gentle spawn, no fail-state. */
+function initStarCatcher() {
+  const canvasEl = document.getElementById('starCanvas');
+  const size = gameCanvasSize(canvasEl, 300, 250);
+  const { ctx, W, H } = setupGameCanvas(canvasEl, size.w, size.h);
+
+  const GOAL = 20;
+  let score = 0;
+  let running = true;
+  let stars = [];
+  let spawnTimer = 0;
+  let lastTime = 0;
+
+  function spawnStar() {
+    stars.push({
+      x: 20 + Math.random() * (W - 40),
+      y: -20,
+      speed: 1 + Math.random() * 1.3,
+      size: 14 + Math.random() * 10,
+      rot: Math.random() * Math.PI,
+      rotSpeed: (Math.random() - 0.5) * 0.05,
+      caught: false,
+      caughtT: 0
+    });
+  }
+
+  function drawStar(s) {
+    ctx.save();
+    ctx.translate(s.x, s.y);
+    ctx.rotate(s.rot);
+    if (s.caught) {
+      ctx.globalAlpha = Math.max(0, 1 - s.caughtT / 15);
+      const sc = 1 + s.caughtT * 0.08;
+      ctx.scale(sc, sc);
+    }
+    ctx.fillStyle = '#ffd84d';
+    ctx.shadowColor = 'rgba(255,216,77,.8)';
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    const spikes = 5, outer = s.size, inner = s.size * 0.45;
+    for (let i = 0; i < spikes * 2; i++) {
+      const r = i % 2 === 0 ? outer : inner;
+      const a = (Math.PI / spikes) * i - Math.PI / 2;
+      const px = Math.cos(a) * r, py = Math.sin(a) * r;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function handleTap(clientX, clientY) {
+    if (!running) return;
+    const rect = canvasEl.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    for (let i = stars.length - 1; i >= 0; i--) {
+      const s = stars[i];
+      if (!s.caught && Math.hypot(x - s.x, y - s.y) < s.size * 1.4) {
+        s.caught = true;
+        score++;
+        const scoreEl = document.getElementById('starScore');
+        if (scoreEl) scoreEl.textContent = score;
+        if (score >= GOAL) {
+          running = false;
+          markGameComplete(4);
+          showToast('🌟 All stars caught!');
+        }
+        break;
+      }
+    }
+  }
+
+  function onClick(e) { handleTap(e.clientX, e.clientY); }
+  function onTouch(e) {
+    e.preventDefault();
+    const t = e.changedTouches[0];
+    handleTap(t.clientX, t.clientY);
+  }
+  canvasEl.addEventListener('click', onClick);
+  canvasEl.addEventListener('touchstart', onTouch, { passive: false });
+
+  function loop(ts) {
+    if (!lastTime) lastTime = ts;
+    const dt = ts - lastTime;
+    lastTime = ts;
+
+    spawnTimer += dt;
+    if (spawnTimer > 550) { spawnStar(); spawnTimer = 0; }
+
+    ctx.clearRect(0, 0, W, H);
+
+    stars = stars.filter(s => {
+      if (s.caught) {
+        s.caughtT++;
+        s.rot += s.rotSpeed;
+        drawStar(s);
+        return s.caughtT < 16;
+      }
+      s.y += s.speed;
+      s.rot += s.rotSpeed;
+      drawStar(s);
+      return s.y < H + 30;
+    });
+
+    if (running) gameLoops[4] = requestAnimationFrame(loop);
+  }
+  gameLoops[4] = requestAnimationFrame(loop);
+
+  gameCleanup[4] = () => {
+    running = false;
+    canvasEl.removeEventListener('click', onClick);
+    canvasEl.removeEventListener('touchstart', onTouch);
+  };
+}
+
+/* ------ GAME 5: Cupid Arrow ------
+   A heart target drifts around the canvas; tap/click it to score a hit.
+   10 hits to win. Target gets a brief "hit" flash then repositions. */
+function initCupidArrow() {
+  const canvasEl = document.getElementById('cupidCanvas');
+  const size = gameCanvasSize(canvasEl, 300, 250);
+  const { ctx, W, H } = setupGameCanvas(canvasEl, size.w, size.h);
+
+  const GOAL = 10;
+  let score = 0;
+  let running = true;
+  let lastTime = 0;
+
+  const target = {
+    x: W / 2, y: H / 2,
+    tx: W / 2, ty: H / 2,
+    size: 26,
+    hitT: 0,
+    hit: false,
+    moveTimer: 0
+  };
+
+  function pickNewTarget() {
+    target.tx = 30 + Math.random() * (W - 60);
+    target.ty = 30 + Math.random() * (H - 60);
+  }
+  pickNewTarget();
+
+  function drawHeartShape(cx, cy, s) {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy + s * 0.3);
+    ctx.bezierCurveTo(cx, cy, cx - s, cy, cx - s, cy + s * 0.4);
+    ctx.bezierCurveTo(cx - s, cy + s * 0.8, cx, cy + s * 1.2, cx, cy + s * 1.4);
+    ctx.bezierCurveTo(cx, cy + s * 1.2, cx + s, cy + s * 0.8, cx + s, cy + s * 0.4);
+    ctx.bezierCurveTo(cx + s, cy, cx, cy, cx, cy + s * 0.3);
+    ctx.closePath();
+  }
+
+  function handleTap(clientX, clientY) {
+    if (!running) return;
+    const rect = canvasEl.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    if (Math.hypot(x - target.x, y - target.y) < target.size * 1.3) {
+      score++;
+      target.hit = true;
+      target.hitT = 0;
+      const scoreEl = document.getElementById('cupidScore');
+      if (scoreEl) scoreEl.textContent = score;
+      if (score >= GOAL) {
+        running = false;
+        markGameComplete(5);
+        showToast('🎯 Cupid never misses!');
+      } else {
+        pickNewTarget();
+      }
+    }
+  }
+
+  function onClick(e) { handleTap(e.clientX, e.clientY); }
+  function onTouch(e) {
+    e.preventDefault();
+    const t = e.changedTouches[0];
+    handleTap(t.clientX, t.clientY);
+  }
+  canvasEl.addEventListener('click', onClick);
+  canvasEl.addEventListener('touchstart', onTouch, { passive: false });
+
+  function loop(ts) {
+    if (!lastTime) lastTime = ts;
+    lastTime = ts;
+
+    target.x += (target.tx - target.x) * 0.06;
+    target.y += (target.ty - target.y) * 0.06;
+    target.moveTimer++;
+    if (target.moveTimer > 90) { pickNewTarget(); target.moveTimer = 0; }
+
+    ctx.clearRect(0, 0, W, H);
+
+    ctx.save();
+    if (target.hit) {
+      target.hitT++;
+      const flash = Math.max(0, 1 - target.hitT / 12);
+      ctx.fillStyle = `rgba(255,255,255,${flash})`;
+      const s = target.size * (1.3 + target.hitT * 0.06);
+      drawHeartShape(target.x, target.y - s * 0.6, s);
+      ctx.fill();
+      if (target.hitT > 12) target.hit = false;
+    }
+    ctx.fillStyle = '#ff5fa2';
+    ctx.shadowColor = 'rgba(255,95,162,.7)';
+    ctx.shadowBlur = 12;
+    drawHeartShape(target.x, target.y - target.size * 0.6, target.size);
+    ctx.fill();
+    ctx.restore();
+
+    if (running) gameLoops[5] = requestAnimationFrame(loop);
+  }
+  gameLoops[5] = requestAnimationFrame(loop);
+
+  gameCleanup[5] = () => {
+    running = false;
+    canvasEl.removeEventListener('click', onClick);
+    canvasEl.removeEventListener('touchstart', onTouch);
+  };
+}
+
+/* ------ GAME 6: Lucky Birthday Wheel ------
+   CSS-rotated wheel with 5 good + 5 bad outcomes (10 segments), for a
+   realistic spin where the result genuinely isn't guaranteed to be a
+   "win" segment. The cubic-bezier transition on .wheel-disc gives a
+   natural fast-start/slow-finish ease. Only 3 spins are allowed total.
+   Landing a GOOD reward within those 3 spins = SUCCESS (completes the
+   game). Using all 3 spins with only bad outcomes = FAIL — a
+   "Try Again" button restarts the wheel with 3 fresh spins. */
+function initLuckyWheel() {
+  const wheel = document.getElementById('birthdayWheel');
+  const spinBtn = document.getElementById('spinWheelBtn');
+  const resultEl = document.getElementById('wheelResult');
+  const triesEl = document.getElementById('wheelTries');
+  const tryAgainBtn = document.getElementById('wheelTryAgainBtn');
+
+  const MAX_SPINS = 3;
+  let spinsUsed = 0;
+  let over = false;
+
+  const rewards = [
+    { emoji: '🎂', text: 'Extra Cake! A second slice just for you.',        good: true  },
+    { emoji: '😅', text: 'Try Again — the wheel got shy this time.',        good: false },
+    { emoji: '🌹', text: 'Magic Rose! Beauty that never fades.',            good: true  },
+    { emoji: '🙈', text: 'No Gift — better luck on the next spin!',         good: false },
+    { emoji: '💖', text: 'Heart Gem! A piece of pure love.',                good: true  },
+    { emoji: '💨', text: 'Empty Box — nothing but a giggle this time.',     good: false },
+    { emoji: '🎁', text: 'Surprise Gift! Something wonderful awaits.',      good: true  },
+    { emoji: '🎭', text: 'Better Luck Next Time — the wheel is playful!',   good: false },
+    { emoji: '⭐', text: 'Golden Star! You shine bright today.',            good: true  },
+    { emoji: '🍂', text: 'Lost Turn — the wheel needs a moment to think.',  good: false }
+  ];
+  const segCount = rewards.length;
+  const segAngle = 360 / segCount;
+  const segColors = rewards.map((r, i) =>
+    r.good
+      ? (i % 2 === 0 ? '#5c1145' : '#7a1860')
+      : (i % 2 === 0 ? '#241430' : '#341a45')
+  );
+
+  wheel.innerHTML = '';
+  const conic = rewards.map((r, i) => `${segColors[i]} ${i * segAngle}deg ${(i + 1) * segAngle}deg`).join(', ');
+  wheel.style.background = `conic-gradient(${conic})`;
+
+  rewards.forEach((r, i) => {
+    const seg = document.createElement('div');
+    seg.className = 'wheel-seg';
+    seg.style.transform = `rotate(${i * segAngle + segAngle / 2}deg)`;
+    seg.innerHTML = `<span>${r.emoji}</span>`;
+    wheel.appendChild(seg);
+  });
+
+  const hub = document.createElement('div');
+  hub.className = 'wheel-hub';
+  wheel.appendChild(hub);
+
+  wheel.style.transition = 'none';
+  wheel.style.transform = 'rotate(0deg)';
+  // Force reflow so the next transform change re-enables the transition.
+  void wheel.offsetWidth;
+  wheel.style.transition = '';
+
+  resultEl.textContent = '';
+  resultEl.className = 'wheel-result';
+  spinBtn.disabled = false;
+  spinBtn.textContent = 'Spin Wheel ✨';
+  if (triesEl) triesEl.textContent = String(MAX_SPINS);
+  if (tryAgainBtn) tryAgainBtn.classList.remove('visible');
+
+  let spinning = false;
+  let currentRotation = 0;
+
+  function endGame(won) {
+    over = true;
+    spinBtn.disabled = true;
+    if (!won && tryAgainBtn) tryAgainBtn.classList.add('visible');
+  }
+
+  function onSpin() {
+    if (spinning || over) return;
+    spinning = true;
+    spinBtn.disabled = true;
+    resultEl.textContent = '';
+    resultEl.className = 'wheel-result';
+
+    const winIndex = Math.floor(Math.random() * segCount);
+    // Land the pointer (fixed at top, 12 o'clock) on the middle of winIndex segment.
+    const targetAngle = 360 - (winIndex * segAngle + segAngle / 2);
+    const fullSpins = (5 + Math.floor(Math.random() * 2)) * 360; // 5-6 full spins, feels less mechanical
+    currentRotation += fullSpins + targetAngle - (currentRotation % 360);
+
+    wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+    const t = setTimeout(() => {
+      const r = rewards[winIndex];
+      spinsUsed++;
+      if (triesEl) triesEl.textContent = String(Math.max(0, MAX_SPINS - spinsUsed));
+
+      resultEl.innerHTML = `<strong style="color:var(--primary);font-size:1.3rem">${r.emoji}</strong><br>${r.text}`;
+      resultEl.className = 'wheel-result ' + (r.good ? 'win' : 'lose');
+      showToast('🎡 ' + r.text);
+
+      if (r.good) {
+        launchConfetti(40);
+        markGameComplete(6);
+        endGame(true);
+        spinBtn.textContent = 'Spin Again 🔄';
+      } else if (spinsUsed >= MAX_SPINS) {
+        endGame(false);
+      } else {
+        spinBtn.disabled = false;
+        spinBtn.textContent = 'Spin Wheel ✨';
+      }
+      spinning = false;
+    }, 4100);
+    cleanupTimeouts.push(t);
+  }
+
+  const cleanupTimeouts = [];
+  spinBtn.addEventListener('click', onSpin);
+
+  function onTryAgain() { initGame(6); }
+  if (tryAgainBtn) tryAgainBtn.addEventListener('click', onTryAgain);
+
+  gameCleanup[6] = () => {
+    spinBtn.removeEventListener('click', onSpin);
+    cleanupTimeouts.forEach(clearTimeout);
+    if (tryAgainBtn) tryAgainBtn.removeEventListener('click', onTryAgain);
+  };
+}
+
+/* ------ GAME 7: Butterfly Rescue (optional mini game) ------
+   A grid of shimmering bubbles — only some trap a butterfly, the rest
+   are empty. Tap a bubble to pop it; butterflies flutter free, empty
+   bubbles just pop with a puff. Max 15 taps allowed. Rescuing 10
+   butterflies = SUCCESS. Using all 15 taps without reaching 10 = FAIL
+   (a "Try Again" button restarts the game with a fresh layout). */
+function initButterflyRescue() {
+  const grid = document.getElementById('rescueGrid');
+  grid.innerHTML = '';
+  const messageEl = document.getElementById('rescueMessage');
+  const tryAgainBtn = document.getElementById('rescueTryAgainBtn');
+  if (messageEl) { messageEl.textContent = ''; messageEl.className = 'hunt-message'; }
+  if (tryAgainBtn) tryAgainBtn.classList.remove('visible');
+
+  const GOAL = 10;
+  const TOTAL_BUBBLES = 20;   // more bubbles than butterflies — some stay empty
+  const MAX_TAPS = 15;
+
+  // Randomly choose which bubbles actually contain a butterfly.
+  let butterflyPositions = new Set();
+  while (butterflyPositions.size < GOAL) {
+    butterflyPositions.add(Math.floor(Math.random() * TOTAL_BUBBLES));
+  }
+
+  let rescued = 0, taps = 0, over = false;
+  const cells = [];
+  const clickHandlers = [];
+  const timeouts = [];
+
+  const scoreEl0 = document.getElementById('rescueScore');
+  if (scoreEl0) scoreEl0.textContent = '0';
+  const tapsEl0 = document.getElementById('rescueTries');
+  if (tapsEl0) tapsEl0.textContent = String(MAX_TAPS);
+
+  const cellPx = Math.min(56, Math.floor((window.innerWidth * 0.8 - 48) / 5));
+  grid.style.gridTemplateColumns = `repeat(5, ${cellPx}px)`;
+
+  function endGame(won) {
+    over = true;
+    if (messageEl) {
+      messageEl.textContent = won
+        ? '🎉 All butterflies rescued!'
+        : '💔 Out of taps — try again!';
+      messageEl.className = 'hunt-message ' + (won ? 'win' : 'lose');
+    }
+    if (won) {
+      markGameComplete(7);
+      showToast('🐰 All butterflies rescued!');
+    } else {
+      showToast('💨 Out of taps!');
+      if (tryAgainBtn) tryAgainBtn.classList.add('visible');
+    }
+  }
+
+  for (let i = 0; i < TOTAL_BUBBLES; i++) {
+    const el = document.createElement('div');
+    el.className = 'rescue-bubble';
+    el.style.width = cellPx + 'px';
+    el.style.height = cellPx + 'px';
+    el.textContent = '🫧';
+    el.style.animationDelay = (Math.random() * 2) + 's';
+
+    const hasButterfly = butterflyPositions.has(i);
+
+    const handler = () => {
+      if (over || el.classList.contains('popped')) return;
+      el.classList.add('popped');
+      taps++;
+      const tapsEl = document.getElementById('rescueTries');
+      if (tapsEl) tapsEl.textContent = String(Math.max(0, MAX_TAPS - taps));
+
+      if (hasButterfly) {
+        el.textContent = '🦋';
+        rescued++;
+        const scoreEl = document.getElementById('rescueScore');
+        if (scoreEl) scoreEl.textContent = rescued;
+        const t = setTimeout(() => { el.classList.add('flutter-away'); }, 300);
+        timeouts.push(t);
+      } else {
+        el.textContent = '💨';
+        el.classList.add('empty-pop');
+      }
+
+      if (!over && rescued >= GOAL) { endGame(true); return; }
+      if (!over && taps >= MAX_TAPS && rescued < GOAL) { endGame(false); }
+    };
+
+    el.addEventListener('click', handler);
+    clickHandlers.push({ el, handler });
+    cells.push(el);
+    grid.appendChild(el);
+  }
+
+  function onTryAgain() { initGame(7); }
+  if (tryAgainBtn) tryAgainBtn.addEventListener('click', onTryAgain);
+
+  gameCleanup[7] = () => {
+    timeouts.forEach(clearTimeout);
+    clickHandlers.forEach(({ el, handler }) => el.removeEventListener('click', handler));
+    if (tryAgainBtn) tryAgainBtn.removeEventListener('click', onTryAgain);
+  };
 }
 
 /* ============================================================
