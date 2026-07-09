@@ -2132,6 +2132,45 @@ html, body {
     HAPPY BIRTHDAY SUPRIYA
   </div>
 </div>
+   
+
+<button class="next-btn" id="finalMsgBtn" style="margin-top:24px">🎥 Play My Message</button>
+
+<div class="final-msg-overlay" id="finalMsgOverlay">
+  <div class="final-msg-card">
+    <button class="wish-close" id="finalMsgClose">✕</button>
+    <div style="font-size:2rem;margin-bottom:10px">💌</div>
+    <audio id="finalMsgAudio" controls style="width:100%">
+      <source src="S.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+</div>
+
+<style>
+.final-msg-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+  background: rgba(18,0,13,.92);
+  backdrop-filter: blur(16px);
+  align-items: center;
+  justify-content: center;
+}
+.final-msg-overlay.visible { display: flex; }
+.final-msg-card {
+  position: relative;
+  background: linear-gradient(135deg, #fff8f5, #ffe8f0);
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  animation: scale-in .5s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+</style>
+   
 
 <!-- Celebration overlay for confetti -->
 <div class="celebration-overlay" id="celebrationOverlay"></div>
@@ -4204,6 +4243,16 @@ function typeEnding() {
     }
   }, 55);
 }
+
+document.getElementById('finalMsgBtn').addEventListener('click', () => {
+document.getElementById('finalMsgOverlay').classList.add('visible');
+document.getElementById('finalMsgAudio').play().catch(() => {});
+});
+document.getElementById('finalMsgClose').addEventListener('click', () => {
+  const audio = document.getElementById('finalMsgAudio');
+  audio.pause();
+document.getElementById('finalMsgOverlay').classList.remove('visible');
+});
 
 /* ============================================================
    DIRECT SCENE LINKS (for rooms without game dependency)
