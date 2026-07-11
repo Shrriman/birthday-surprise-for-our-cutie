@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Birthday Supriya 🌸</title>
+<title>Happy Birthday Laxmipriya 🌸</title>
 <style>
 /* ============================================================
    RESET & BASE
@@ -1715,7 +1715,7 @@ html, body {
     </div>
   </div>
   <div class="birthday-text-container">
-    <div class="birthday-main" id="birthdayMain">Happy Birthday Supriya</div>
+    <div class="birthday-main" id="birthdayMain">Happy Birthday Laxmipriya</div>
     <div class="birthday-sub">✨ &nbsp; Wishing you a magical day Cutie &nbsp; ✨</div>
   </div>
   <button class="next-btn" id="toBalloonsBtn" style="margin-top:16px;opacity:0;transition:opacity 1s 5s;pointer-events:none">
@@ -1900,7 +1900,7 @@ html, body {
 
   <div class="album-finale" id="albumFinale">
     <div class="album-finale-glow">💖</div>
-    <div class="album-finale-msg">This is only the beginning, Priyuu...<br>So much more waits ahead. ✨</div>
+    <div class="album-finale-msg">This is only the beginning, Princess...<br>So much more waits ahead. ✨</div>
     <button class="next-btn album-continue-btn" id="toPortalFromAlbumBtn">Continue the Journey 🎮</button>
   </div>
 </div>
@@ -2129,7 +2129,7 @@ html, body {
   <div class="ending-heart">💖</div>
   <div class="ending-message" id="endingMsg"></div>
   <div style="font-size:.8rem;letter-spacing:4px;color:rgba(255,214,234,.4);margin-top:16px;animation:fade-up 3s ease">
-    HAPPY BIRTHDAY MY LOVE
+    HAPPY BIRTHDAY MY PRETTY PRINCESS
   </div>
 </div>
 
@@ -2480,7 +2480,7 @@ function checkPassword() {
     card.style.transform = 'scale(1.05)';
     card.style.boxShadow = '0 0 200px rgba(255,95,162,.8)';
     card.style.opacity = '0';
-    showToast('✨ Welcome, Supriya!');
+    showToast('✨ Welcome, Laxmipriya!');
     setTimeout(() => goTo('scene-darkroom'), 1200);
   } else {
     // Wrong: shake
@@ -2667,7 +2667,7 @@ function launchBalloons() {
    SCENE 5: WISH WALL
    ============================================================ */
 const wishes = [
-  { from: '🌸 A Friend', text: 'You are the sunshine in every cloudy day. May this birthday bring you all the joy and love you deserve. Happy Birthday, Supriya! 🌸' },
+  { from: '🌸 A Friend', text: 'You are the sunshine in every cloudy day. May this birthday bring you all the joy and love you deserve. Happy Birthday, Laxmipriya! 🌸' },
   { from: '💖 The Stars', text: 'Every star in the sky was placed there just to celebrate you. You are rare, you are precious, and you are so loved! 💫' },
   { from: '🌙 The Moon', text: 'On this special night, the moon shines extra bright — just for you. May your life be as beautiful as moonlight. 🌙' },
   { from: '🌹 The Garden', text: 'Every rose that blooms does so thinking of you. May your year ahead be as beautiful and fragrant as the loveliest flower. 🌹' },
@@ -2730,7 +2730,7 @@ document.getElementById('blowBtn').addEventListener('click', () => {
     document.getElementById('blowBtn').disabled = true;
     document.getElementById('cakeInstruction').textContent = '🎉 Wish granted! All candles are out!';
     launchConfetti();
-    showToast('🎂 Happy Birthday Supriya! 🎂');
+    showToast('🎂 Happy Birthday Laxmipriya! 🎂');
     setTimeout(() => {
       document.getElementById('toGiftBtn').style.display = 'inline-block';
     }, 1500);
@@ -2806,7 +2806,7 @@ function buildGallery() {
     });
     wall.appendChild(p);
 
-    loadAlbumImage(m.src, `Supriya — Memory ${i+1}`).then((resolvedSrc) => {
+    loadAlbumImage(m.src, `Laxmipriya — Memory ${i+1}`).then((resolvedSrc) => {
       const frame = document.getElementById('polaroidImg' + i);
       if (frame) frame.innerHTML = `<img src="${resolvedSrc}" alt="${m.caption.replace(/"/g,'')}" />`;
     });
@@ -4191,7 +4191,7 @@ document.getElementById('toEndingBtn').addEventListener('click', () => {
    ============================================================ */
 function typeEnding() {
   const msg = document.getElementById('endingMsg');
-  const text = "Happy Birthday Supriya.\nMay your smile always shine\nbrighter than the stars.";
+  const text = "Happy Birthday Laxmipriya.\nMay your smile always shine\nbrighter than the stars.";
   msg.textContent = '';
   let i = 0;
   const interval = setInterval(() => {
