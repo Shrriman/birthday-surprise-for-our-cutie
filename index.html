@@ -1651,6 +1651,10 @@ html, body {
 </head>
 <body>
 
+<audio id="bg-music" loop preload="auto">
+  <source src="S.mp3" type="audio/mpeg">
+</audio>
+
 <!-- Background Canvas -->
 <canvas id="bgCanvas"></canvas>
 
@@ -1663,6 +1667,7 @@ html, body {
 <!-- ====================================================
      SCENE 0: PASSWORD GATE
      ==================================================== -->
+   
 <div class="scene active" id="scene-password">
   <div class="glass-card">
     <h2>A surprise awaits<br>for someone special...</h2>
@@ -1680,7 +1685,7 @@ html, body {
       <button class="num-btn" data-n="4">4</button>
       <button class="num-btn" data-n="5">5</button>
       <button class="num-btn" data-n="6">6</button>
-      <button class="num-btn" data-n="7">7</button>
+      <button class="num-btn" data-n="7" onclick="startJourney()">7</button>
       <button class="num-btn" data-n="8">8</button>
       <button class="num-btn" data-n="9">9</button>
       <button class="num-btn del" data-n="del">⌫</button>
@@ -4205,6 +4210,26 @@ function typeEnding() {
   }, 55);
 }
 
+
+function startJourney() {
+      const music = document.getElementById('bg-music');
+      
+      // Debugging line: isse console mein pata chal jayega function call hua ya nahi
+      console.log("Button Clicked, trying to play music...");
+    
+      music.play().then(() => {
+        console.log("Music is playing!");
+        music.volume = 0.5;
+      }).catch(error => {
+        console.error("Playback failed:", error);
+        // Agar yahan error aaye toh iska matlab link dead hai ya browser block kar raha hai
+      });
+    
+      nextSection(2);
+}
+
+
+   
 /* ============================================================
    DIRECT SCENE LINKS (for rooms without game dependency)
    ============================================================ */
