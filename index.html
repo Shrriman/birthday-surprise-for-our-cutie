@@ -1825,7 +1825,7 @@ html, body {
      ==================================================== -->
 <div class="scene" id="scene-gift">
   <div style="font-family:var(--font-script);font-size:clamp(1.6rem,4vw,2.4rem);color:var(--primary);text-shadow:0 0 20px var(--glow);">
-    A Special Gift For You Dhana
+    A Special Gift For My Bestie
   </div>
   <div class="gift-wrapper" id="giftWrapper">
     <svg class="gift-box-svg" viewBox="0 0 200 200" id="giftSVG">
@@ -2119,7 +2119,7 @@ html, body {
   <div style="font-size:.85rem;letter-spacing:4px;color:var(--secondary);text-transform:uppercase;animation:fade-up 1s ease">
     ✨ For Someone Special ✨
   </div>
-  <div class="finale-name" id="finaleName">SUPRIYA</div>
+  <div class="finale-name" id="finaleName">LAXMIPRIYA</div>
   <div style="font-size:clamp(.9rem,2vw,1.2rem);color:var(--secondary);text-align:center;animation:fade-up 1.5s ease;letter-spacing:2px">
     The stars spell your name tonight 🌟
   </div>
@@ -2781,14 +2781,14 @@ document.getElementById('giftCloseBtn').addEventListener('click', () => {
    SCENE 8: MEMORY GALLERY
    ============================================================ */
 const memories = [
-  { emoji: '🌸', src: 'S9.jpg', caption: 'A morning that felt like magic — remember this feeling always.' },
-  { emoji: '✨', src: 'S10.jpg', caption: 'Moments like this are the reason stars exist.' },
-  { emoji: '🌹', src: 'S11.jpg', caption: 'Every rose holds a secret. This one holds your smile.' },
-  { emoji: '💖', src: 'S12.jpg', caption: 'The day joy became your middle name.' },
-  { emoji: '🦋', src: 'S13.jpg', caption: 'Beautiful things happen to beautiful souls — like you.' },
-  { emoji: '🌙', src: 'S14.jpg', caption: 'Moonlit memories, forever yours.' },
-  { emoji: '🎶', src: 'S15.jpg', caption: 'Life plays its most beautiful melody when you\'re in it.' },
-  { emoji: '🌟', src: 'S16.jpg', caption: 'A star was born — and the universe has never been the same.' }
+  { emoji: '🌸', src: 'S1.jpg', caption: 'Every friendship begins with a beautiful memory — this is one of ours.' },
+  { emoji: '✨', src: 'S2.jpg', caption: 'Some moments are too special to ever be forgotten.' },
+  { emoji: '🌹', src: 'S3.jpg', caption: 'Every smile tells a story, and yours is my favourite.' },
+  { emoji: '💖', src: 'S4.jpg', caption: 'A day filled with smiles, laughter, and unforgettable memories.' },
+  { emoji: '🦋', src: 'S5.jpg', caption: 'Beautiful hearts make the best friends.' },
+  { emoji: '🌙', src: 'S6.jpg', caption: 'Memories that shine as brightly as the moon.' },
+  { emoji: '🎶', src: 'S7.jpg', caption: 'Every memory with you feels like my favourite song.' },
+  { emoji: '🌟', src: 'S8.jpg', caption: 'Here\'s to many more adventures, laughter, and unforgettable moments together.' }
 ];
 
 function buildGallery() {
@@ -2836,14 +2836,14 @@ document.getElementById('toPortalBtn').addEventListener('click', () => {
    instead, so the album never breaks or shows a broken image icon.
    ============================================================ */
 const albumPages = [
-  { src: 'S1.jpg', caption: 'Every story has a beginning — here\'s ours with you. 💖' },
-  { src: 'S2.jpg', caption: 'That smile could light up the darkest room.' },
-  { src: 'S3.jpg', caption: 'A moment we never wanted to end.' },
-  { src: 'S4.jpg', caption: 'Laughter looks so beautiful on you.' },
-  { src: 'S5.jpg', caption: 'Some memories just feel like home.' },
-  { src: 'S6.jpg', caption: 'You make ordinary days feel like celebrations.' },
-  { src: 'S7.jpg', caption: 'Forever grateful for moments like this one.' },
-  { src: 'S8.jpg', caption: 'And the best memories? Still being made. ✨' }
+  { src: 'S9.jpg', caption: 'Every friendship has a beautiful beginning — this is ours. ❤️' },
+  { src: 'S10.jpg', caption: 'Your smile makes every moment brighter. 😊' },
+  { src: 'S11.jpg', caption: 'Some moments become memories we\'ll always treasure. 💕' },
+  { src: 'S12.jpg', caption: 'Your laughter is the best part of every day. 😄' },
+  { src: 'S13.jpg', caption: 'True friendship always feels like home. 🏡' },
+  { src: 'S14.jpg', caption: 'Every moment with you becomes a beautiful memory. 🌸' },
+  { src: 'S15.jpg', caption: 'Grateful for every smile, every laugh, and every memory we\'ve shared. 💖' },
+  { src: 'S16.jpg', caption: 'The best part of our friendship... the memories we\'re yet to create. ✨' }
 ];
 
 const albumImageCache = {};   // src -> resolved <img src> or placeholder data-URL
@@ -3817,16 +3817,16 @@ function initLuckyWheel() {
   let over = false;
 
   const rewards = [
-    { emoji: '🎂', text: 'Extra Cake! A second slice just for you.',        good: true  },
-    { emoji: '😅', text: 'Try Again — the wheel got shy this time.',        good: false },
-    { emoji: '🌹', text: 'Magic Rose! Beauty that never fades.',            good: true  },
-    { emoji: '🙈', text: 'No Gift — better luck on the next spin!',         good: false },
-    { emoji: '💖', text: 'Heart Gem! A piece of pure love.',                good: true  },
-    { emoji: '💨', text: 'Empty Box — nothing but a giggle this time.',     good: false },
-    { emoji: '🎁', text: 'Surprise Gift! Something wonderful awaits.',      good: true  },
-    { emoji: '🎭', text: 'Better Luck Next Time — the wheel is playful!',   good: false },
-    { emoji: '🌟', text: 'Golden Star! You shine bright today.',            good: true  },
-    { emoji: '👻', text: 'Lost Turn — the wheel needs a moment to think.',  good: false }
+  { emoji: '🎂', text: 'Extra Cake! A second slice just for you.', good: true },
+  { emoji: '😅', text: 'Try Again — the wheel got shy this time.', good: false },
+  { emoji: '🌹', text: 'Magic Rose! A symbol of beautiful friendship.', good: true },
+  { emoji: '🙈', text: 'No Gift — better luck on the next spin!', good: false },
+  { emoji: '💖', text: 'Friendship Gem! A treasure as special as our bond.', good: true },
+  { emoji: '💨', text: 'Empty Box — nothing but a giggle this time.', good: false },
+  { emoji: '🎁', text: 'Surprise Gift! Something wonderful awaits.', good: true },
+  { emoji: '🎭', text: 'Better Luck Next Time — the wheel is playful!', good: false },
+  { emoji: '🌟', text: 'Golden Star! Keep shining like the amazing bestie you are.', good: true },
+  { emoji: '👻', text: 'Lost Turn — the wheel needs a moment to think.', good: false }
   ];
   const segCount = rewards.length;
   const segAngle = 360 / segCount;
